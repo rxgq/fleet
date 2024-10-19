@@ -18,7 +18,7 @@ class BoardController {
   void addTasks(List<TaskModel> tasks) {
     for (final task in tasks) {
       for (final col in columns) {
-        if (col.title != task.status) continue;
+        if (col.id != task.columnId) continue;
         col.tasks.add(task);
       }
     }

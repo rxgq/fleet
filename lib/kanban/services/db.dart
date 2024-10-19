@@ -52,4 +52,14 @@ class DatabaseService {
 
     return tasks;
   }
+
+  Future<bool> updateStatus(TaskModel task, TaskColumnModel column) async {
+    await _open();
+
+    final result = await _conn!.execute(
+      "update tasks set columnId = ${column.id} where id = ${task.id}",
+    );
+
+    return result.affectedRows != 0;
+  }
 }
