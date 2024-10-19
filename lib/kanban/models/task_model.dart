@@ -1,7 +1,7 @@
 class TaskModel {
   final int id;
   final String title;
-  final int columnId;
+  int columnId;
   final String description;
   final int position;
 

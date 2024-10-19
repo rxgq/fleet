@@ -4,7 +4,9 @@ import 'package:fleet/kanban/widgets/task_column.dart';
 import 'package:flutter/material.dart';
 
 class BoardView extends StatefulWidget {
-  const BoardView({super.key});
+  const BoardView({
+    super.key, 
+  });
 
   @override
   State<BoardView> createState() => _BoardViewState();
@@ -37,7 +39,9 @@ class _BoardViewState extends State<BoardView> {
       body: Row(
         children: [
           for (var col in _board.columns)
-            TaskColumn(model: col)
+            TaskColumn(model: col, onUpdate: () {
+              setState(() {});
+            })
         ],
       )
     );

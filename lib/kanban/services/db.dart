@@ -1,9 +1,11 @@
+import 'package:fleet/kanban/controllers/board_controller.dart';
 import 'package:fleet/kanban/models/task_column_model.dart';
 import 'package:fleet/kanban/models/task_model.dart';
 import 'package:postgres/postgres.dart';
 import 'dart:io';
 
 class DatabaseService {
+  final _board = BoardController();
   Connection? _conn;
 
   Future<void> _open() async {
@@ -53,6 +55,14 @@ class DatabaseService {
     return tasks;
   }
 
+  Future refreshBoard() async {
+    final columns = await getColumns();
+    final tasks = await getTasks();
+
+    _board.setColumns(columns);
+    _board.addTasks(tasks);
+  }
+
   Future<bool> updateStatus(TaskModel task, TaskColumnModel column) async {
     await _open();
 
@@ -60,6 +70,18 @@ class DatabaseService {
       "update tasks set columnId = ${column.id} where id = ${task.id}",
     );
 
+    await refreshBoard();
+    return result.affectedRows != 0;
+  }
+
+  Future<bool> createTask(String title, TaskColumnModel column) async {
+    await _open();
+
+    final result = await _conn!.execute(
+      "insert into tasks (title, columnId, description, position) values ('$title', ${column.id}, '', 0);"
+    );
+
+    await refreshBoard();
     return result.affectedRows != 0;
   }
 }
