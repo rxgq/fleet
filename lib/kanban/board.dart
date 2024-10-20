@@ -39,7 +39,8 @@ class _BoardViewState extends State<BoardView> {
       body: Row(
         children: [
           for (var col in _board.columns)
-            TaskColumn(model: col, onUpdate: () {
+            TaskColumn(model: col, onUpdate: () async {
+              await _db.refreshBoard();
               setState(() {});
             })
         ],

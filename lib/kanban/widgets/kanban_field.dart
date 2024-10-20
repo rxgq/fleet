@@ -41,6 +41,7 @@ class _KanbanFieldState extends State<KanbanField> {
         focusNode: _focusNode,
         style: const TextStyle(
           color: Color.fromARGB(255, 92, 92, 92),
+          fontSize: 14
         ),
         controller: widget.controller,
         onSubmitted: (_) {
@@ -53,10 +54,6 @@ class _KanbanFieldState extends State<KanbanField> {
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.white,
-          hintStyle: const TextStyle(
-            color: Color.fromARGB(255, 206, 206, 206),
-            fontSize: 12,
-          ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(2),
             borderSide: const BorderSide(

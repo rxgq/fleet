@@ -58,7 +58,7 @@ class TaskColumnState extends State<TaskColumn> {
             },
             child: Container(
               width: 240,
-              height: MediaQuery.sizeOf(context).height, // Set height based on screen size
+              height: MediaQuery.sizeOf(context).height,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 243, 243, 243),
                 borderRadius: BorderRadius.circular(2),
@@ -66,7 +66,6 @@ class TaskColumnState extends State<TaskColumn> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Column header
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
@@ -75,7 +74,6 @@ class TaskColumnState extends State<TaskColumn> {
                     ),
                   ),
                   
-                  // Scrollable tasks
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
@@ -97,9 +95,10 @@ class TaskColumnState extends State<TaskColumn> {
                               controller: _taskTitleController,
                               onEnter: () async {
                                 _isAddingTask = false;
-                                _isHovering = false;
-
+                                
                                 await _db.createTask(_taskTitleController.text, widget.model);
+                                _taskTitleController.clear();
+
                                 widget.onUpdate();
                               },
                             ),
@@ -118,14 +117,22 @@ class TaskColumnState extends State<TaskColumn> {
 
   Widget _buildTask(TaskModel task) {
     return TaskCard(
+      onUpdate: () {
+        widget.onUpdate();
+      },
       model: task,
       onMenuTap: () async {
-        showDialog(context: context, builder: (context) {
-          return TaskScreen(model: task);
-        });
+        await showDialog(
+          context: context,
+          builder: (context) {
+            return TaskScreen(model: task);
+          },
+        );
 
         await _db.refreshBoard();
-        widget.onUpdate();
+        setState(() {
+          widget.onUpdate();
+        });
       },
     );
   }

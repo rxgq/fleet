@@ -21,7 +21,8 @@ class _AddTaskFieldState extends State<AddTaskField> {
       padding: const EdgeInsets.all(8.0),
       child: TextField(
         style: const TextStyle(
-          color: Color.fromARGB(255, 92, 92, 92)
+          color: Color.fromARGB(255, 92, 92, 92),
+          fontSize: 14
         ),
         controller: widget.controller,
         autofocus: true,
@@ -30,6 +31,7 @@ class _AddTaskFieldState extends State<AddTaskField> {
         },
         cursorColor: const Color.fromARGB(255, 92, 92, 92),
         decoration: InputDecoration(
+          hoverColor: Colors.white,
           filled: true,
           fillColor: Colors.white,
           hintText: 'new task...',

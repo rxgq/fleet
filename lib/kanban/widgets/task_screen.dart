@@ -32,7 +32,7 @@ class _TaskScreenState extends State<TaskScreen> {
       backgroundColor: Colors.transparent,
       body: Center(
         child: Container(
-          width: 700, height: 320,
+          width: 900, height: 420,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(4)

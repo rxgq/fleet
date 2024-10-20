@@ -1,21 +1,26 @@
 import 'package:fleet/kanban/models/task_model.dart';
+import 'package:fleet/kanban/services/db.dart';
+import 'package:fleet/kanban/widgets/kanban_dialogue.dart';
 import 'package:flutter/material.dart';
 
 class TaskCard extends StatefulWidget {
   const TaskCard({
     super.key, 
     required this.model, 
-    required this.onMenuTap
+    required this.onMenuTap,
+    required this.onUpdate,
   });
 
   final TaskModel model;
   final VoidCallback onMenuTap;
+  final VoidCallback onUpdate;
 
   @override
   State<TaskCard> createState() => _TaskCardState();
 }
 
 class _TaskCardState extends State<TaskCard> {
+  final _db = DatabaseService();
   bool _isHovering = false;
 
   @override
@@ -58,13 +63,26 @@ class _TaskCardState extends State<TaskCard> {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.model.title,
-                style: const TextStyle(fontSize: 14),
+              child: SizedBox(
+                width: constraints.maxWidth - 50,
+                child: Text(
+                  widget.model.title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
             ),
             const Spacer(),
-            if (_isHovering) _buildInfoIcon(),
+            Column(
+              children: [
+                if (_isHovering) _buildInfoIcon(),
+                const Spacer(),
+                if (_isHovering) _buildDeleteIcon(),
+              ],
+            )
           ],
         ),
       ),
@@ -108,6 +126,37 @@ class _TaskCardState extends State<TaskCard> {
           },
           child: const Icon(
             Icons.menu,
+            size: 18,
+            color: Colors.grey,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeleteIcon() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () async {
+            showDialog(context: context, builder: (context) {
+              return KanbanDialog(message: "delete this task?", onClick: (option) async {
+                if (option == "no") {
+                  Navigator.pop(context);
+                  return;
+                }
+
+                await _db.deleteTask(widget.model);
+                widget.onUpdate();
+
+                Navigator.pop(context);
+              });
+            });
+          },
+          child: const Icon(
+            Icons.delete,
             size: 18,
             color: Colors.grey,
           ),

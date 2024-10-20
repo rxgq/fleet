@@ -95,4 +95,15 @@ class DatabaseService {
     await refreshBoard();
     return result.affectedRows != 0;
   }
+
+  Future<bool> deleteTask(TaskModel task) async {
+    await _open();
+
+    final result = await _conn!.execute(
+      "delete from tasks where id = ${task.id}"
+    );
+
+    await refreshBoard();
+    return result.affectedRows != 0;
+  }
 }
