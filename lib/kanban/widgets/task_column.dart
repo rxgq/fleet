@@ -9,9 +9,9 @@ import 'package:flutter/material.dart';
 
 class TaskColumn extends StatefulWidget {
   const TaskColumn({
-    super.key, 
+    super.key,
     required this.model,
-    required this.onUpdate
+    required this.onUpdate,
   });
 
   final TaskColumnModel model;
@@ -57,41 +57,56 @@ class TaskColumnState extends State<TaskColumn> {
               });
             },
             child: Container(
-              width: 240, height: MediaQuery.sizeOf(context).height,
+              width: 240,
+              height: MediaQuery.sizeOf(context).height, // Set height based on screen size
               decoration: BoxDecoration(
-                color:  const Color.fromARGB(255, 243, 243, 243),
-                borderRadius: BorderRadius.circular(2)
+                color: const Color.fromARGB(255, 243, 243, 243),
+                borderRadius: BorderRadius.circular(2),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Column header
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       widget.model.title,
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 36, 36, 36)
+                      style: const TextStyle(color: Color.fromARGB(255, 36, 36, 36)),
+                    ),
+                  ),
+                  
+                  // Scrollable tasks
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (var task in widget.model.tasks) _buildTask(task),
+
+                          if (_isHovering && !_isAddingTask)
+                            AddTaskButton(
+                              onTap: () {
+                                setState(() {
+                                  _isAddingTask = true;
+                                });
+                              },
+                            ),
+
+                          if (_isAddingTask)
+                            AddTaskField(
+                              controller: _taskTitleController,
+                              onEnter: () async {
+                                _isAddingTask = false;
+                                _isHovering = false;
+
+                                await _db.createTask(_taskTitleController.text, widget.model);
+                                widget.onUpdate();
+                              },
+                            ),
+                        ],
                       ),
                     ),
                   ),
-                  for (var task in widget.model.tasks)
-                    _buildTask(task),
-
-                  if (_isHovering && !_isAddingTask) AddTaskButton(onTap: () {
-                    setState(() {
-                      _isAddingTask = true;
-                    });
-                  }),
-
-                  if (_isAddingTask) AddTaskField(
-                    controller: _taskTitleController,
-                    onEnter: () async {
-                    _isAddingTask = false;
-                    _isHovering = false;
-
-                    await _db.createTask(_taskTitleController.text, widget.model);
-                    widget.onUpdate();
-                  })
                 ],
               ),
             ),
@@ -104,10 +119,13 @@ class TaskColumnState extends State<TaskColumn> {
   Widget _buildTask(TaskModel task) {
     return TaskCard(
       model: task,
-      onMenuTap: () {
+      onMenuTap: () async {
         showDialog(context: context, builder: (context) {
           return TaskScreen(model: task);
         });
+
+        await _db.refreshBoard();
+        widget.onUpdate();
       },
     );
   }

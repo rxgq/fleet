@@ -1,4 +1,6 @@
 import 'package:fleet/kanban/models/task_model.dart';
+import 'package:fleet/kanban/services/db.dart';
+import 'package:fleet/kanban/widgets/kanban_field.dart';
 import 'package:flutter/material.dart';
 
 class TaskScreen extends StatefulWidget {
@@ -14,23 +16,40 @@ class TaskScreen extends StatefulWidget {
 }
 
 class _TaskScreenState extends State<TaskScreen> {
+  final _db = DatabaseService();
+
+  final _descriptionController = TextEditingController();
+
+  @override
+  void initState() {
+    _descriptionController.text = widget.model.description;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Center(
         child: Container(
-          width: 700, height: 400,
+          width: 700, height: 320,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(4)
           ),
-          child: Row(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _title(),
-              const Spacer(),
-              _status()
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _title(),
+                  const Spacer(),
+                  _status()
+                ],
+              ),
+
+              _description()
             ],
           ),
         ),
@@ -64,6 +83,14 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 
   Widget _description() {
-    return Text(widget.model.description);
+    return SizedBox(
+      width: 400, height: 120,
+      child: KanbanField(
+        onSubmit: () async {
+          await _db.updateDescription(widget.model, _descriptionController.text);
+        }, 
+        controller: _descriptionController
+      ),
+    );
   }
 }

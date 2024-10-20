@@ -74,6 +74,17 @@ class DatabaseService {
     return result.affectedRows != 0;
   }
 
+  Future<bool> updateDescription(TaskModel task, String description) async {
+    await _open();
+
+    final result = await _conn!.execute(
+      "update tasks set description = '$description' where id = ${task.id}",
+    );
+
+    await refreshBoard();
+    return result.affectedRows != 0;
+  }
+
   Future<bool> createTask(String title, TaskColumnModel column) async {
     await _open();
 
