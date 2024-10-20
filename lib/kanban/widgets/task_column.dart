@@ -1,9 +1,9 @@
-import 'package:fleet/kanban/controllers/board_controller.dart';
 import 'package:fleet/kanban/models/task_column_model.dart';
 import 'package:fleet/kanban/models/task_model.dart';
 import 'package:fleet/kanban/services/db.dart';
 import 'package:fleet/kanban/widgets/add_task_button.dart';
 import 'package:fleet/kanban/widgets/add_task_field.dart';
+import 'package:fleet/kanban/widgets/task_screen.dart';
 import 'package:fleet/kanban/widgets/task_card.dart';
 import 'package:flutter/material.dart';
 
@@ -75,7 +75,7 @@ class TaskColumnState extends State<TaskColumn> {
                     ),
                   ),
                   for (var task in widget.model.tasks)
-                    TaskCard(model: task),
+                    _buildTask(task),
 
                   if (_isHovering && !_isAddingTask) AddTaskButton(onTap: () {
                     setState(() {
@@ -98,6 +98,17 @@ class TaskColumnState extends State<TaskColumn> {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildTask(TaskModel task) {
+    return TaskCard(
+      model: task,
+      onMenuTap: () {
+        showDialog(context: context, builder: (context) {
+          return TaskScreen(model: task);
+        });
+      },
     );
   }
 }

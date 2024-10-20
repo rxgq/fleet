@@ -1,16 +1,18 @@
 class TaskModel {
   final int id;
   final String title;
-  int columnId;
   final String description;
   final int position;
+  int columnId;
+  String status;
 
   TaskModel({
     required this.id,
     required this.title,
-    required this.columnId,
     required this.description,
-    required this.position
+    required this.position,
+    required this.columnId,
+    required this.status
   });
 
   static TaskModel fromMap(Map<String, dynamic> map) {
@@ -19,7 +21,8 @@ class TaskModel {
       title: map["title"],
       columnId: map["status"],
       description: map["description"],
-      position: map["position"]
+      position: map["position"],
+      status: ""
     );
   }
 }
