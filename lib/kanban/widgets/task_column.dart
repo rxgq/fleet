@@ -1,8 +1,8 @@
 import 'package:fleet/kanban/models/task_column_model.dart';
 import 'package:fleet/kanban/models/task_model.dart';
 import 'package:fleet/kanban/services/db.dart';
-import 'package:fleet/kanban/widgets/add_task_button.dart';
-import 'package:fleet/kanban/widgets/add_task_field.dart';
+import 'package:fleet/kanban/widgets/add_task/add_task_button.dart';
+import 'package:fleet/kanban/widgets/add_task/add_task_field.dart';
 import 'package:fleet/kanban/widgets/task_screen.dart';
 import 'package:fleet/kanban/widgets/task_card.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +25,7 @@ class TaskColumnState extends State<TaskColumn> {
   final _db = DatabaseService();
 
   bool _isHovering = false;
+  bool _isHoveringTitle = false;
   bool _isAddingTask = false;
 
   final _taskTitleController = TextEditingController();
@@ -66,13 +67,7 @@ class TaskColumnState extends State<TaskColumn> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      widget.model.title,
-                      style: const TextStyle(color: Color.fromARGB(255, 36, 36, 36)),
-                    ),
-                  ),
+                  _buildTitle(),
                   
                   Expanded(
                     child: SingleChildScrollView(
@@ -111,6 +106,49 @@ class TaskColumnState extends State<TaskColumn> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return MouseRegion(
+      onEnter: (_) {
+        setState(() {
+          _isHoveringTitle = true;
+        });
+      },
+      onExit: (_) {
+        setState(() {
+          _isHoveringTitle = false;
+        });
+      },
+      child: SizedBox(
+        width: 240,
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                widget.model.title,
+                style: const TextStyle(color: Color.fromARGB(255, 36, 36, 36)),
+              ),
+            ),
+            const Spacer(),
+            if (_isHoveringTitle) MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                child: const Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: Icon(
+                    Icons.edit,
+                    size: 18,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            ) 
+          ],
+        ),
       ),
     );
   }

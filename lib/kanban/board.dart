@@ -2,9 +2,11 @@ import 'package:fleet/kanban/services/db.dart';
 import 'package:fleet/kanban/controllers/board_controller.dart';
 import 'package:fleet/kanban/services/weather/models/weather_model.dart';
 import 'package:fleet/kanban/services/weather/utils/weather_service.dart';
+import 'package:fleet/kanban/widgets/add_column/add_column_field.dart';
 import 'package:fleet/kanban/widgets/task_column.dart';
-import 'package:fleet/kanban/widgets/weather_info.dart';
+import 'package:fleet/kanban/widgets/weather/weather_info.dart';
 import 'package:flutter/material.dart';
+import 'widgets/add_column/add_column_button.dart';
 
 class BoardView extends StatefulWidget {
   const BoardView({
@@ -18,10 +20,13 @@ class BoardView extends StatefulWidget {
 class _BoardViewState extends State<BoardView> {
   final _db = DatabaseService();
   final _board = BoardController();
-  final _weather = WeatherService();
+  final _wt = WeatherService();
 
-  WeatherModel? weather;
+  WeatherModel? _weather;
   bool _isLoading = true;
+
+  final _columnTitleController = TextEditingController();
+  bool _isAddingColumn = false;
 
   @override
   void initState() {
@@ -30,7 +35,7 @@ class _BoardViewState extends State<BoardView> {
   }
 
   Future _initBoard() async {
-    weather = await _weather.getWeather();
+    _weather = await _wt.getWeather();
 
     final columns = await _db.getColumns();
     _board.setColumns(columns);
@@ -51,8 +56,22 @@ class _BoardViewState extends State<BoardView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _columns(),
+          !_isAddingColumn ? AddColumnButton(
+            onClick: () {
+              setState(() {
+                _isAddingColumn = true;
+              });
+            }
+          ) : AddColumnField(
+            onEnter: () async {
+              await _db.createColumn(_columnTitleController.text);
+              setState(() {});
+            }, 
+            controller: _columnTitleController
+          ),
+
           const Spacer(),
-          if (!_isLoading) WeatherInfo(model: weather!),
+          if (!_isLoading) WeatherInfo(model: _weather!),
         ],
       )
     );

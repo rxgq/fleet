@@ -33,7 +33,6 @@ class _WeatherInfoState extends State<WeatherInfo> {
           "${widget.model.temperature}°C",
           style: const TextStyle(
               color: Color.fromARGB(255, 69, 69, 69),
-              fontWeight: FontWeight.bold,
               fontSize: 14
             ),
         )

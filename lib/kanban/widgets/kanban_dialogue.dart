@@ -24,7 +24,7 @@ class _KanbanDialogState extends State<KanbanDialog> {
       backgroundColor: Colors.transparent,
       body: Center(
         child: Container(
-          width: 320, height: 140,
+          width: 420, height: 180,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(4)
@@ -58,7 +58,7 @@ class _KanbanDialogState extends State<KanbanDialog> {
 
   Widget _message() {
     return Padding(
-      padding: const EdgeInsets.only(left: 16, top: 8),
+      padding: const EdgeInsets.only(left: 80, top: 42),
       child: Text(
         widget.message,
         style: const TextStyle(

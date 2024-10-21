@@ -106,4 +106,15 @@ class DatabaseService {
     await refreshBoard();
     return result.affectedRows != 0;
   }
+
+    Future<bool> createColumn(String title) async {
+    await _open();
+
+    final result = await _conn!.execute(
+      "insert into columns (title) values ('$title');"
+    );
+
+    await refreshBoard();
+    return result.affectedRows != 0;
+  }
 }

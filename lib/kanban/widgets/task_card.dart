@@ -30,8 +30,9 @@ class _TaskCardState extends State<TaskCard> {
       child: LayoutBuilder(
         builder: (context, constraints) {
           return Draggable<TaskModel>(
-            feedback: _buildTaskDragging(constraints),
             data: widget.model,
+            childWhenDragging: _buildTaskDragging(constraints),
+            feedback: _buildTaskFeedback(constraints),
             child: _buildTask(constraints),
           );
         },
@@ -90,6 +91,32 @@ class _TaskCardState extends State<TaskCard> {
   }
 
   Widget _buildTaskDragging(BoxConstraints constraints) {
+    return Material(
+      elevation: 8,
+      child: Container(
+        width: constraints.maxWidth,
+        height: 90,
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 255, 255, 255),
+          borderRadius: BorderRadius.circular(2),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                widget.model.title,
+                style: const TextStyle(fontSize: 14),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTaskFeedback(BoxConstraints constraints) {
     return Material(
       elevation: 8,
       child: Container(
