@@ -62,20 +62,7 @@ class _TaskCardState extends State<TaskCard> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: constraints.maxWidth - 50,
-                child: Text(
-                  widget.model.title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ),
-            ),
+            _taskTitle(constraints),
             const Spacer(),
             Column(
               children: [
@@ -92,24 +79,18 @@ class _TaskCardState extends State<TaskCard> {
 
   Widget _buildTaskDragging(BoxConstraints constraints) {
     return Material(
-      elevation: 8,
+      elevation: 2,
       child: Container(
         width: constraints.maxWidth,
         height: 90,
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 255, 255, 255),
+          color: const Color.fromARGB(255, 248, 248, 248),
           borderRadius: BorderRadius.circular(2),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.model.title,
-                style: const TextStyle(fontSize: 14),
-              ),
-            ),
+            _taskTitle(constraints)
           ],
         ),
       ),
@@ -129,14 +110,25 @@ class _TaskCardState extends State<TaskCard> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.model.title,
-                style: const TextStyle(fontSize: 14),
-              ),
-            ),
+            _taskTitle(constraints)
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _taskTitle(BoxConstraints constraints) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        width: constraints.maxWidth - 50,
+        child: Text(
+          widget.model.title,
+          style: const TextStyle(
+            fontSize: 14,
+          ),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
         ),
       ),
     );
@@ -169,16 +161,14 @@ class _TaskCardState extends State<TaskCard> {
         child: GestureDetector(
           onTap: () async {
             showDialog(context: context, builder: (context) {
-              return KanbanDialog(message: "delete this task?", onClick: (option) async {
-                if (option == "no") {
-                  Navigator.pop(context);
-                  return;
-                }
+              var taskTitle = widget.model.title;
+              if (taskTitle.length > 30) taskTitle = widget.model.title.substring(0, 30);
+
+              return KanbanDialog(message: "delete task '$taskTitle'?", onClick: (option) async {
+                if (option == "no") return;
 
                 await _db.deleteTask(widget.model);
                 widget.onUpdate();
-
-                Navigator.pop(context);
               });
             });
           },

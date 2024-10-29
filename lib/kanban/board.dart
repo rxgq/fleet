@@ -85,17 +85,25 @@ class _BoardViewState extends State<BoardView> {
   }
 
   Widget _columns() {
-    return Row(
-      children: [
-        for (var col in _board.columns)
-          TaskColumn(
-            model: col,
-            onUpdate: () async {
-              await _db.refreshBoard();
-              setState(() {});
-            }
-          )
-      ],
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.sizeOf(context).width - 340,
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            for (var col in _board.columns)
+              TaskColumn(
+                model: col,
+                onUpdate: () async {
+                  await _db.refreshBoard();
+                  setState(() {});
+                }
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

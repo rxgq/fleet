@@ -3,6 +3,7 @@ import 'package:fleet/kanban/models/task_model.dart';
 import 'package:fleet/kanban/services/db.dart';
 import 'package:fleet/kanban/widgets/add_task/add_task_button.dart';
 import 'package:fleet/kanban/widgets/add_task/add_task_field.dart';
+import 'package:fleet/kanban/widgets/kanban_dialogue.dart';
 import 'package:fleet/kanban/widgets/task_screen.dart';
 import 'package:fleet/kanban/widgets/task_card.dart';
 import 'package:flutter/material.dart';
@@ -128,9 +129,16 @@ class TaskColumnState extends State<TaskColumn> {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.model.title,
-                style: const TextStyle(color: Color.fromARGB(255, 36, 36, 36)),
+              child: SizedBox(
+                width: 160,
+                child: Text(
+                  widget.model.title,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 36, 36, 36)
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
             const Spacer(),
@@ -138,8 +146,14 @@ class TaskColumnState extends State<TaskColumn> {
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
                 onTap: () async {
-                  await _db.deleteColumn(widget.model);
-                  widget.onUpdate();
+                  showDialog(context: context, builder: (_) {
+                    return KanbanDialog(message: "delete column '${widget.model.title}'?", onClick: (option) async {
+                      if (option == "yes") {
+                        await _db.deleteColumn(widget.model);
+                        widget.onUpdate();
+                      }
+                    });
+                  });
                 },
                 child: const Padding(
                   padding: EdgeInsets.only(right: 8),

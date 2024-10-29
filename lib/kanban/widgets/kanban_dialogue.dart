@@ -78,6 +78,7 @@ class _KanbanDialogState extends State<KanbanDialog> {
         onExit: (_) => onHover(false),
         child: GestureDetector(
           onTap: () {
+            Navigator.pop(context);
             widget.onClick(option);
           },
           child: SizedBox(
