@@ -128,4 +128,15 @@ class DatabaseService {
     await refreshBoard();
     return result.affectedRows != 0;
   }
+
+  Future<bool> updateColumnTitle(TaskColumnModel column, String title) async {
+    await _open();
+
+    final result = await _conn!.execute(
+      "update columns set title = '$title' where id = ${column.id}"
+    );
+
+    await refreshBoard();
+    return result.affectedRows != 0;
+  }
 }

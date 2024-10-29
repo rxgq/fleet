@@ -28,8 +28,10 @@ class TaskColumnState extends State<TaskColumn> {
   bool _isHovering = false;
   bool _isHoveringTitle = false;
   bool _isAddingTask = false;
+  bool _isEditingColumn = false;
 
   final _taskTitleController = TextEditingController();
+  final _columnTitleController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +129,7 @@ class TaskColumnState extends State<TaskColumn> {
         width: 240,
         child: Row(
           children: [
-            Padding(
+            !_isEditingColumn ? Padding(
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
                 width: 160,
@@ -140,7 +142,7 @@ class TaskColumnState extends State<TaskColumn> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-            ),
+            ) : _buildColumnTitleField(),
             const Spacer(),
             if (_isHoveringTitle) MouseRegion(
               cursor: SystemMouseCursors.click,
@@ -169,6 +171,12 @@ class TaskColumnState extends State<TaskColumn> {
             if (_isHoveringTitle) MouseRegion(
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isEditingColumn = true;
+                    _columnTitleController.text = widget.model.title;
+                  });
+                },
                 child: const Padding(
                   padding: EdgeInsets.only(right: 8),
                   child: Icon(
@@ -180,6 +188,43 @@ class TaskColumnState extends State<TaskColumn> {
               ),
             ) 
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildColumnTitleField() {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: SizedBox(
+        width: 140, height: 30,
+        child: TextField(
+          style: const TextStyle(
+            color: Color.fromARGB(255, 92, 92, 92),
+            fontSize: 14
+          ),
+          controller: _columnTitleController,
+          autofocus: true,
+          onSubmitted: (_) async {
+            await _db.updateColumnTitle(widget.model, _columnTitleController.text);
+            widget.onUpdate();
+            _isEditingColumn = false;
+          },
+          cursorColor: const Color.fromARGB(255, 92, 92, 92),
+          decoration: InputDecoration(
+            hoverColor: Colors.white,
+            filled: true,
+            fillColor: Colors.white,
+            hintStyle: const TextStyle(
+              color: Color.fromARGB(255, 206, 206, 206),
+              fontSize: 14
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(2),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
+          ),
         ),
       ),
     );
