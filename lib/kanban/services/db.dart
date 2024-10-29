@@ -107,11 +107,22 @@ class DatabaseService {
     return result.affectedRows != 0;
   }
 
-    Future<bool> createColumn(String title) async {
+  Future<bool> createColumn(String title) async {
     await _open();
 
     final result = await _conn!.execute(
       "insert into columns (title) values ('$title');"
+    );
+
+    await refreshBoard();
+    return result.affectedRows != 0;
+  }
+
+  Future<bool> deleteColumn(TaskColumnModel column) async {
+    await _open();
+
+    final result = await _conn!.execute(
+      "delete from columns where id = ${column.id}"
     );
 
     await refreshBoard();

@@ -137,6 +137,24 @@ class TaskColumnState extends State<TaskColumn> {
             if (_isHoveringTitle) MouseRegion(
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
+                onTap: () async {
+                  await _db.deleteColumn(widget.model);
+                  widget.onUpdate();
+                },
+                child: const Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: Icon(
+                    Icons.delete,
+                    size: 18,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            if (_isHoveringTitle) MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
                 child: const Padding(
                   padding: EdgeInsets.only(right: 8),
                   child: Icon(

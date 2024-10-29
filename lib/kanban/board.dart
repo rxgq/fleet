@@ -52,28 +52,35 @@ class _BoardViewState extends State<BoardView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Row(
+      body: !_isLoading ? Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _columns(),
-          !_isAddingColumn ? AddColumnButton(
-            onClick: () {
-              setState(() {
-                _isAddingColumn = true;
-              });
-            }
-          ) : AddColumnField(
-            onEnter: () async {
-              await _db.createColumn(_columnTitleController.text);
-              setState(() {});
-            }, 
-            controller: _columnTitleController
-          ),
+          _addColumnButton(),
 
           const Spacer(),
-          if (!_isLoading) WeatherInfo(model: _weather!),
+          WeatherInfo(model: _weather!),
         ],
-      )
+      ) : const SizedBox()
+    );
+  }
+
+  Widget _addColumnButton() {
+    return !_isAddingColumn ? AddColumnButton(
+      onClick: () {
+        setState(() {
+          _isAddingColumn = true;
+        });
+      }
+    ) : AddColumnField(
+      onEnter: () async {
+        await _db.createColumn(_columnTitleController.text);
+        _columnTitleController.clear();
+        _isAddingColumn = false;
+
+        setState(() {});
+      }, 
+      controller: _columnTitleController
     );
   }
 
@@ -81,10 +88,13 @@ class _BoardViewState extends State<BoardView> {
     return Row(
       children: [
         for (var col in _board.columns)
-          TaskColumn(model: col, onUpdate: () async {
-            await _db.refreshBoard();
-            setState(() {});
-          })
+          TaskColumn(
+            model: col,
+            onUpdate: () async {
+              await _db.refreshBoard();
+              setState(() {});
+            }
+          )
       ],
     );
   }
