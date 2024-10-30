@@ -1,11 +1,15 @@
+import 'package:fleet/kanban/models/task_project_model.dart';
+
 final class TaskModel {
   final int id;
   final String title;
   final String description;
   final int position;
+
   int columnId;
-  int? projectId;
   String status;
+
+  final TaskProjectModel? project;
 
   TaskModel({
     required this.id,
@@ -13,18 +17,24 @@ final class TaskModel {
     required this.description,
     required this.position,
     required this.columnId,
-    required this.projectId,
-    this.status = ""
+    this.status = "",
+    this.project,
   });
 
   static TaskModel fromMap(Map<String, dynamic> map) {
+    final project = TaskProjectModel(
+      projectId: map["project_id"] ?? -1,
+      title: map["project"].toString()
+    );
+
+
     return TaskModel(
       id: map["id"],
       title: map["title"],
       columnId: map["column_id"],
-      projectId: map["project_id"],
       description: map["description"],
       position: map["position"],
+      project: (map["project"] == null || map["project_id"] == null) ? null : project,
     );
   }
 }

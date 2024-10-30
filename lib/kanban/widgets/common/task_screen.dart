@@ -1,4 +1,6 @@
+import 'package:fleet/kanban/controllers/board_controller.dart';
 import 'package:fleet/kanban/models/task_model.dart';
+import 'package:fleet/kanban/models/task_project_model.dart';
 import 'package:fleet/kanban/services/database_service.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_dropdown.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
@@ -18,6 +20,7 @@ class TaskScreen extends StatefulWidget {
 }
 
 class _TaskScreenState extends State<TaskScreen> {
+  final _board = BoardController();
   final _db = DatabaseService();
 
   final _descriptionController = TextEditingController();
@@ -47,13 +50,33 @@ class _TaskScreenState extends State<TaskScreen> {
                 children: [
                   _title(),
                   const Spacer(),
-                  _status()
+                  _status(),
+                  _closeIcon(),
                 ],
               ),
 
               _description(),
               _projectDropdown()
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _closeIcon() {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.pop(context);
+        },
+        child: const Padding(
+          padding: EdgeInsets.only(top: 10, right: 8),
+          child: Icon(
+            Icons.close,
+            color: Colors.grey,
+            size: 18,
           ),
         ),
       ),
@@ -97,14 +120,24 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 
   Widget _projectDropdown() {
+    final selectedProject = _board.projects
+      .where((p) => p.title == widget.model.project?.title).firstOrNull;
+
+    final generalProject = _board.projects.firstWhere((p) => p.title == "general");
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: FleetDropdown(
-        items: const ["Web Applications", "Object Oriented", "Action Enquiry"], 
-        onChange: (item) {
-      
-        }
+      child: FleetDropdown<TaskProjectModel>(
+        itemIfNull: generalProject,
+        selectedItem: selectedProject,
+        items: _board.projects,
+        onChange: (project) async {
+          await _db.updateProject(widget.model, project);
+          await _db.refreshBoard();
+        },
+        itemToString: (project) => project.title,
       ),
     );
   }
+
 }

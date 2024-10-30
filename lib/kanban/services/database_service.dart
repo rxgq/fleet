@@ -35,15 +35,24 @@ final class DatabaseService {
     try {
       await _db.open();
 
+      var projects = await getProjects();
+
       final taskRows = await _db.conn!.execute("select * from tasks");
-      final tasks = taskRows.map((row) => TaskModel.fromMap({
-        "id": row[0],
-        "column_id": row[1],
-        "title": row[2],
-        "description": row[3],
-        "position": row[4],
-        "project_id": row[5]
-      })).toList();
+      final tasks = taskRows.map((row) {
+
+        final projectId = row[5]?.toString();
+        final project = projects.where((p) => p.projectId == int.parse(projectId ?? "0")).firstOrNull;
+
+        return TaskModel.fromMap({
+          "id": row[0],
+          "column_id": row[1],
+          "title": row[2],
+          "description": row[3],
+          "position": row[4],
+          "project_id": project?.projectId,
+          "project": project?.title,
+        });
+      }).toList();
 
       _logger.LogInfo("Got ${tasks.length} task(s).");
       return tasks;
@@ -60,14 +69,14 @@ final class DatabaseService {
       final projectRows = await _db.conn!.execute("select * from projects");
       final projects = projectRows.map((row) => TaskProjectModel.fromMap({
         "project_id": row[0],
-        "title": row[1]
+        "project": row[1]
       })).toList();
 
       _logger.LogInfo("Got ${projects.length} projects(s).");
       return projects;
 
     } catch (ex) {
-      _logger.LogError("Error updating column title: $ex");
+      _logger.LogError("Error getting projects: $ex");
       return [];
     }
   }
@@ -119,6 +128,25 @@ final class DatabaseService {
       return result.affectedRows != 0;
     } catch (ex) {
       _logger.LogError("Error updating task description: $ex");
+      return false;
+    }
+  }
+  
+  Future<bool> updateProject(final TaskModel task, final TaskProjectModel project) async {
+    try {
+      await _db.open();
+
+      final result = await _db.conn!.execute(
+        "update tasks set project_id = '${project.projectId}' where task_id = ${task.id}",
+      );
+
+      await refreshBoard();
+      await _db.close();
+
+      _logger.LogInfo("Updated task '${task.title}' project to '${project.title}'.");
+      return result.affectedRows != 0;
+    } catch (ex) {
+      _logger.LogError("Error updating task project: $ex");
       return false;
     }
   }

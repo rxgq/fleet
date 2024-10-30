@@ -18,8 +18,9 @@ class WeatherService {
     );
   }
 
-  Future<WeatherModel> getWeather() async {
-    final ipInfo = await _getIpInfo();
+  Future<WeatherModel?> getWeather() async {
+    try {
+      final ipInfo = await _getIpInfo();
 
     const baseUrl = "https://api.open-meteo.com/v1/forecast";
     final url = "?latitude=${ipInfo.lat}&longitude=${ipInfo.lon}&current_weather=true";
@@ -34,6 +35,9 @@ class WeatherService {
       description: mapWeatherCode(weatherCode),
       temperature: weather['temperature'].toString()
     );
+    } catch (ex) {
+      return null;
+    }
   }
 
   String mapWeatherCode(int code) {
