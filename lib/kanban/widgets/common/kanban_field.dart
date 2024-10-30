@@ -41,7 +41,9 @@ class _KanbanFieldState extends State<KanbanField> {
         focusNode: _focusNode,
         style: const TextStyle(
           color: Color.fromARGB(255, 92, 92, 92),
-          fontSize: 14
+          fontSize: 14,
+          fontFamily: "Inter",
+          fontWeight: FontWeight.w500
         ),
         controller: widget.controller,
         onSubmitted: (_) {

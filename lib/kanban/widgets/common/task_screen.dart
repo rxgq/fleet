@@ -1,5 +1,6 @@
 import 'package:fleet/kanban/models/task_model.dart';
 import 'package:fleet/kanban/services/database_service.dart';
+import 'package:fleet/kanban/widgets/common/fleet_text.dart';
 import 'package:fleet/kanban/widgets/common/kanban_field.dart';
 import 'package:flutter/material.dart';
 
@@ -60,11 +61,11 @@ class _TaskScreenState extends State<TaskScreen> {
   Widget _title() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Text(
-        widget.model.title,
-        style: const TextStyle(
-          fontSize: 20
-        ),
+      child: FleetText(
+        text: widget.model.title,
+        size: 20,
+        weight: FontWeight.w300,
+        colour: Colors.grey,
       ),
     );
   }
@@ -72,12 +73,11 @@ class _TaskScreenState extends State<TaskScreen> {
   Widget _status() {
     return Padding(
       padding: const EdgeInsets.only(right: 12, top: 8),
-      child: Text(
-        widget.model.status,
-        style: const TextStyle(
-          fontSize: 16,
-          color: Colors.grey
-        ),
+      child: FleetText(
+        text: widget.model.status,
+        size: 16,
+        colour: Colors.grey,
+        weight: FontWeight.w100,
       ),
     );
   }

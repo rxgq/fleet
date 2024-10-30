@@ -1,3 +1,4 @@
+import 'package:fleet/kanban/widgets/common/fleet_text.dart';
 import 'package:flutter/material.dart';
 
 class KanbanDialog extends StatefulWidget {
@@ -59,12 +60,11 @@ class _KanbanDialogState extends State<KanbanDialog> {
   Widget _message() {
     return Padding(
       padding: const EdgeInsets.only(left: 80, top: 42),
-      child: Text(
-        widget.message,
-        style: const TextStyle(
-          color: Color.fromARGB(255, 75, 75, 75),
-          fontSize: 14
-        ),
+      child: FleetText(
+        text: widget.message,
+        colour: const Color.fromARGB(255, 75, 75, 75),
+        size: 14,
+        weight: FontWeight.w300,
       ),
     );
   }
@@ -83,13 +83,11 @@ class _KanbanDialogState extends State<KanbanDialog> {
           },
           child: SizedBox(
             width: 28,
-            child: Text(
-              option,
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 14,
-                fontWeight: isHovering ? FontWeight.bold : FontWeight.normal,
-              ),
+            child: FleetText(
+              text: option,
+              colour: Colors.grey,
+              size: 14,
+              weight: isHovering ? FontWeight.bold : FontWeight.normal,
             ),
           ),
         ),

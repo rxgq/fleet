@@ -1,5 +1,6 @@
 import 'package:fleet/kanban/models/task_model.dart';
 import 'package:fleet/kanban/services/database_service.dart';
+import 'package:fleet/kanban/widgets/common/fleet_text.dart';
 import 'package:fleet/kanban/widgets/common/kanban_dialogue.dart';
 import 'package:flutter/material.dart';
 
@@ -122,13 +123,11 @@ class _TaskCardState extends State<TaskCard> {
       padding: const EdgeInsets.all(8.0),
       child: SizedBox(
         width: constraints.maxWidth - 50,
-        child: Text(
-          widget.model.title,
-          style: const TextStyle(
-            fontSize: 14,
-          ),
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
+        child: FleetText(
+          text: widget.model.title,
+          size: 14,
+          colour: Colors.grey,
+          weight: FontWeight.w300,
         ),
       ),
     );

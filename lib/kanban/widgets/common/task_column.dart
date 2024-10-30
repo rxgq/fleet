@@ -3,10 +3,13 @@ import 'package:fleet/kanban/models/task_model.dart';
 import 'package:fleet/kanban/services/database_service.dart';
 import 'package:fleet/kanban/widgets/add_task/add_task_button.dart';
 import 'package:fleet/kanban/widgets/add_task/add_task_field.dart';
+import 'package:fleet/kanban/widgets/common/fleet_text.dart';
 import 'package:fleet/kanban/widgets/common/kanban_dialogue.dart';
 import 'package:fleet/kanban/widgets/common/task_screen.dart';
 import 'package:fleet/kanban/widgets/common/task_card.dart';
 import 'package:flutter/material.dart';
+
+import '../../../constants.dart';
 
 class TaskColumn extends StatefulWidget {
   const TaskColumn({
@@ -62,9 +65,9 @@ class TaskColumnState extends State<TaskColumn> {
             },
             child: Container(
               width: 240,
-              height: MediaQuery.sizeOf(context).height,
+              height: MediaQuery.sizeOf(context).height - 60,
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 243, 243, 243),
+                color: constGrey,
                 borderRadius: BorderRadius.circular(2),
               ),
               child: Column(
@@ -133,13 +136,11 @@ class TaskColumnState extends State<TaskColumn> {
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
                 width: 160,
-                child: Text(
-                  widget.model.title,
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 36, 36, 36)
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                child: FleetText(
+                  text: widget.model.title,
+                  size: 14,
+                  colour: const Color.fromARGB(255, 110, 110, 110),
+                  weight: FontWeight.w500,
                 ),
               ),
             ) : _buildColumnTitleField(),

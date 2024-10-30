@@ -1,12 +1,12 @@
-import 'package:fleet/kanban/services/auth.dart';
 import 'package:fleet/kanban/services/database_service.dart';
 import 'package:fleet/kanban/controllers/board_controller.dart';
-import 'package:fleet/kanban/services/weather/models/weather_model.dart';
-import 'package:fleet/kanban/services/weather/utils/weather_service.dart';
 import 'package:fleet/kanban/widgets/add_column/add_column_field.dart';
+import 'package:fleet/kanban/widgets/common/task_bar.dart';
 import 'package:fleet/kanban/widgets/common/task_column.dart';
 import 'package:fleet/kanban/widgets/weather/weather_info.dart';
 import 'package:flutter/material.dart';
+import '../services/weather/models/weather_model.dart';
+import '../services/weather/utils/weather_service.dart';
 import '../widgets/add_column/add_column_button.dart';
 
 class BoardView extends StatefulWidget {
@@ -22,7 +22,6 @@ class _BoardViewState extends State<BoardView> {
   final _db = DatabaseService();
   final _board = BoardController();
   final _wt = WeatherService();
-  final _auth = AuthService();
 
   WeatherModel? _weather;
   bool _isLoading = true;
@@ -37,8 +36,6 @@ class _BoardViewState extends State<BoardView> {
   }
 
   Future _initBoard() async {
-    await _auth.login("ashton", "277070");
-
     _weather = await _wt.getWeather();
 
     final columns = await _db.getColumns();
@@ -56,14 +53,19 @@ class _BoardViewState extends State<BoardView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: !_isLoading ? Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: !_isLoading ? Column(
         children: [
-          _columns(),
-          _addColumnButton(),
-
-          const Spacer(),
-          WeatherInfo(model: _weather!),
+          const TaskBar(),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _columns(),
+              _addColumnButton(),
+          
+              const Spacer(),
+              WeatherInfo(model: _weather!),
+            ],
+          ),
         ],
       ) : const SizedBox()
     );

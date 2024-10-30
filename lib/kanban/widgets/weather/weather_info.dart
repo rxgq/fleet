@@ -1,5 +1,6 @@
-import 'package:fleet/kanban/services/weather/models/weather_model.dart';
 import 'package:flutter/material.dart';
+
+import '../../services/weather/models/weather_model.dart';
 
 class WeatherInfo extends StatefulWidget {
   const WeatherInfo({

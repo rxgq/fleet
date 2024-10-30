@@ -1,3 +1,4 @@
+import 'package:fleet/constants.dart';
 import 'package:flutter/material.dart';
 
 class AddColumnButton extends StatefulWidget {
@@ -24,9 +25,9 @@ class _AddColumnButtonState extends State<AddColumnButton> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
-            width: 40, height: 40,
+            width: 30, height: 30,
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 243, 243, 243),
+              color: buttonGrey,
               borderRadius: BorderRadius.circular(2)
             ),
             child: const Icon(

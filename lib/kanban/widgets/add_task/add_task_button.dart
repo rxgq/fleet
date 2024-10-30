@@ -1,3 +1,4 @@
+import 'package:fleet/constants.dart';
 import 'package:flutter/material.dart';
 
 class AddTaskButton extends StatefulWidget {
@@ -22,7 +23,7 @@ class _AddTaskButtonState extends State<AddTaskButton> {
           child: Container(
             width: constraints.maxWidth, height: 30,
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 226, 226, 226),
+              color: buttonGrey,
               borderRadius: BorderRadius.circular(2)
             ),
             child: Row(
