@@ -149,12 +149,23 @@ class TaskColumnState extends State<TaskColumn> {
               child: GestureDetector(
                 onTap: () async {
                   showDialog(context: context, builder: (_) {
-                    return KanbanDialog(message: "delete column '${widget.model.title}'?", onClick: (option) async {
-                      if (option == "yes") {
+                    final subMsg = "the ${widget.model.tasks.length} task(s) in this column will also be deleted";
+
+                    return KanbanDialog(
+                      message: "delete column '${widget.model.title}'?\n${widget.model.tasks.isNotEmpty ? subMsg : ""}", 
+                      onClick: (final option) async {
+                        if (option == "no") return;
+      
+
+                        for (var task in widget.model.tasks) {
+                          await _db.deleteTask(task);
+                        }
+
                         await _db.deleteColumn(widget.model);
+
                         widget.onUpdate();
                       }
-                    });
+                    );
                   });
                 },
                 child: const Padding(
