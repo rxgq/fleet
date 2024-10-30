@@ -3,6 +3,7 @@ import 'package:fleet/kanban/models/task_column_model.dart';
 import 'package:fleet/kanban/models/task_model.dart';
 import 'package:fleet/kanban/services/logger.dart';
 
+import '../models/task_project_model.dart';
 import 'fleet_context.dart';
 
 final class DatabaseService {
@@ -41,9 +42,8 @@ final class DatabaseService {
         "title": row[2],
         "description": row[3],
         "position": row[4],
+        "project_id": row[5]
       })).toList();
-
-      await _db.close();
 
       _logger.LogInfo("Got ${tasks.length} task(s).");
       return tasks;
@@ -52,15 +52,37 @@ final class DatabaseService {
       return [];
     }
   }
+  
+  Future<List<TaskProjectModel>> getProjects() async {
+    try {
+      await _db.open();
+
+      final projectRows = await _db.conn!.execute("select * from projects");
+      final projects = projectRows.map((row) => TaskProjectModel.fromMap({
+        "project_id": row[0],
+        "title": row[1]
+      })).toList();
+
+      _logger.LogInfo("Got ${projects.length} projects(s).");
+      return projects;
+
+    } catch (ex) {
+      _logger.LogError("Error updating column title: $ex");
+      return [];
+    }
+  }
 
   Future<void> refreshBoard() async {
     final columns = await getColumns();
+    final projects = await getProjects();
     final tasks = await getTasks();
 
     _board.setColumns(columns);
+    _board.setProjects(projects);
     _board.addTasks(tasks);
 
-    _logger.LogInfo("Refreshed board.");
+    await _db.close();
+    _logger.LogInfo("Refreshed board.\n");
   }
 
   Future<bool> updateStatus(final TaskModel task, final TaskColumnModel column) async {

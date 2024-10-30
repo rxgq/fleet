@@ -37,12 +37,7 @@ class _BoardViewState extends State<BoardView> {
 
   Future _initBoard() async {
     _weather = await _wt.getWeather();
-
-    final columns = await _db.getColumns();
-    _board.setColumns(columns);
-
-    final tasks = await _db.getTasks();
-    _board.addTasks(tasks);
+    await _db.refreshBoard();
 
     setState(() {
       _isLoading = false;

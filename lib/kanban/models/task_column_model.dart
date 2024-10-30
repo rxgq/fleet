@@ -1,6 +1,6 @@
 import 'package:fleet/kanban/models/task_model.dart';
 
-class TaskColumnModel {
+final class TaskColumnModel {
   final int id;
   final String title;
   final List<TaskModel> tasks = [];

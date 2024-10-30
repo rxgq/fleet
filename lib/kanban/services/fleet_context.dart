@@ -12,7 +12,7 @@ final class FleetContext {
   Future<void> open() async {
     try {
       if (conn?.isOpen == true) {
-        _logger.LogInfo("Open connection reused.");
+        _logger.LogEvent("Open connection reused.");
         return;
       }
 
@@ -30,7 +30,7 @@ final class FleetContext {
         )
       );
 
-      _logger.LogInfo("Opened connection.");
+      _logger.LogEvent("Opened connection.");
     } catch (ex) {
       _logger.LogError("Error opening connection: $ex");
       conn = null;
@@ -41,7 +41,7 @@ final class FleetContext {
     try {
       if (conn != null && conn!.isOpen) {
         await conn!.close();
-        _logger.LogInfo("Closed connection.");
+        _logger.LogEvent("Closed connection.");
       }
     } catch (ex) {
       _logger.LogError("Error closing connection: $ex");
