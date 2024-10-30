@@ -2,74 +2,39 @@ import 'package:fleet/kanban/controllers/board_controller.dart';
 import 'package:fleet/kanban/models/task_column_model.dart';
 import 'package:fleet/kanban/models/task_model.dart';
 import 'package:fleet/kanban/services/logger.dart';
-import 'package:postgres/postgres.dart';
-import 'dart:io';
+
+import 'fleet_context.dart';
 
 final class DatabaseService {
   final _board = BoardController();
-  Connection? _conn;
+  final _db = FleetContext();
 
   final _logger = Logger();
 
-  Future<void> _open() async {
-    try {
-      final pass = Platform.environment['db_pass'];
-      if (_conn?.isOpen == true) return;
-
-      _conn = await Connection.open(
-        Endpoint(
-          host: 'localhost',
-          database: 'postgres',
-          username: 'postgres',
-          password: pass,
-        ), 
-        settings: const ConnectionSettings(
-          sslMode: SslMode.disable
-        )
-      );
-
-    } catch (ex) {
-      print(ex);
-      _conn = null;
-    }
-  }
-
-  Future<void> _close() async {
-    try {
-      if (_conn != null && _conn!.isOpen) {
-        await _conn!.close();
-      }
-    } catch (ex) {
-      print(ex);
-    } finally {
-      _conn = null;
-    }
-  }
-
   Future<List<TaskColumnModel>> getColumns() async {
     try {
-      await _open();
+      await _db.open();
 
-      final columnRows = await _conn!.execute("select * from task_columns");
+      final columnRows = await _db.conn!.execute("select * from task_columns");
       final columns = columnRows.map((col) => TaskColumnModel.fromMap({
         "id": col[0],
         "title": col[1],
         "task_position": col[2]
       })).toList();
-
+      
+      _logger.LogInfo("Got ${columns.length} column(s).");
       return columns;
     } catch (ex) {
-      print("Exception in getColumns: $ex");
+      _logger.LogError("Error getting columns: $ex");
       return [];
     }
   }
 
   Future<List<TaskModel>> getTasks() async {
     try {
-      await _open();
+      await _db.open();
 
-      final taskRows = await _conn!.execute("select * from tasks");
-
+      final taskRows = await _db.conn!.execute("select * from tasks");
       final tasks = taskRows.map((row) => TaskModel.fromMap({
         "id": row[0],
         "column_id": row[1],
@@ -78,10 +43,12 @@ final class DatabaseService {
         "position": row[4],
       })).toList();
 
-      await _close();
+      await _db.close();
+
+      _logger.LogInfo("Got ${tasks.length} task(s).");
       return tasks;
     } catch (ex) {
-      print("Exception in getTasks: $ex");
+      _logger.LogError("Error getting tasks: $ex");
       return [];
     }
   }
@@ -92,134 +59,143 @@ final class DatabaseService {
 
     _board.setColumns(columns);
     _board.addTasks(tasks);
+
+    _logger.LogInfo("Refreshed board.");
   }
 
   Future<bool> updateStatus(final TaskModel task, final TaskColumnModel column) async {
     try {
-      await _open();
+      await _db.open();
 
-      final result = await _conn!.execute(
+      final result = await _db.conn!.execute(
         "update tasks set column_id = ${column.id} where task_id = ${task.id}",
       );
 
       await refreshBoard();
-      await _close();
+      await _db.close();
 
+      _logger.LogInfo("Updated task: ${task.title} status to ${column.title}.");
       return result.affectedRows != 0;
     } catch (ex) {
-      print("Exception in updateStatus: $ex");
+      _logger.LogError("Error updating task status: $ex");
       return false;
     }
   }
 
   Future<bool> updateDescription(final TaskModel task, final String description) async {
     try {
-      await _open();
+      await _db.open();
 
-      final result = await _conn!.execute(
+      final result = await _db.conn!.execute(
         "update tasks set description = '$description' where task_id = ${task.id}",
       );
 
       await refreshBoard();
-      await _close();
+      await _db.close();
 
+      _logger.LogInfo("Updated task ${task.title} description.");
       return result.affectedRows != 0;
     } catch (ex) {
-      print("Exception in updateDescription: $ex");
+      _logger.LogError("Error updating task description: $ex");
       return false;
     }
   }
 
   Future<bool> createTask(final String title, final TaskColumnModel column) async {
     try {
-      await _open();
+      await _db.open();
 
-      final result = await _conn!.execute(
+      final result = await _db.conn!.execute(
         "insert into tasks (title, column_id, description, task_position) values ('$title', ${column.id}, '', 0);"
       );
 
       await refreshBoard();
-      await _close();
+      await _db.close();
 
+      _logger.LogInfo("Created task $title");
       return result.affectedRows != 0;
     } catch (ex) {
-      print("Exception in createTask: $ex");
+      _logger.LogError("Error creating task: $ex");
       return false;
     }
   }
 
   Future<bool> deleteTask(final TaskModel task) async {
     try {
-      await _open();
+      await _db.open();
 
-      final result = await _conn!.execute(
+      final result = await _db.conn!.execute(
         "delete from tasks where task_id = ${task.id}"
       );
 
       await refreshBoard();
-      await _close();
+      await _db.close();
 
+      _logger.LogInfo("Deleted task ${task.title}");
       return result.affectedRows != 0;
     } catch (ex) {
-      print("Exception in deleteTask: $ex");
+      _logger.LogError("Error deleting task: $ex");
       return false;
     }
   }
 
   Future<bool> createColumn(final String title) async {
     try {
-      await _open();
+      await _db.open();
 
       var columns = await getColumns();
       int maxPos = columns.isEmpty ? 0 : columns
         .map((col) => col.position).reduce((a, b) => a > b ? a : b);
 
-      final result = await _conn!.execute(
+      final result = await _db.conn!.execute(
         "insert into task_columns (title, column_position) values ('$title', ${maxPos + 1});"
       );
 
       await refreshBoard();
-      await _close();
+      await _db.close();
 
+      _logger.LogInfo("Created column $title");
       return result.affectedRows != 0;
     } catch (ex) {
-      print("Exception in createColumn: $ex");
+      _logger.LogError("Error creating column: $ex");
       return false;
     }
   }
 
   Future<bool> deleteColumn(final TaskColumnModel column) async {
     try {
-      await _open();
+      await _db.open();
 
-      final result = await _conn!.execute(
+      final result = await _db.conn!.execute(
         "delete from task_columns where column_id = ${column.id}"
       );
 
       await refreshBoard();
-      await _close();
+      await _db.close();
 
+      _logger.LogInfo("Deleted column ${column.title}");
       return result.affectedRows != 0;
     } catch (ex) {
-      print("Exception in deleteColumn: $ex");
+      _logger.LogError("Error deleting column: $ex");
       return false;
     }
   }
 
   Future<bool> updateColumnTitle(final TaskColumnModel column, final String title) async {
     try {
-      await _open();
+      await _db.open();
 
-      final result = await _conn!.execute(
+      final result = await _db.conn!.execute(
         "update task_columns set title = '$title' where column_id = ${column.id}"
       );
 
       await refreshBoard();
-      await _close();
+      await _db.close();
 
+      _logger.LogInfo("Updated column ${column.title} to $title");
       return result.affectedRows != 0;
     } catch (ex) {
-      print("Exception in updateColumnTitle: $ex");
+      _logger.LogError("Error updating column title: $ex");
       return false;
     }
   }

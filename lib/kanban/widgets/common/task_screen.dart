@@ -1,6 +1,6 @@
 import 'package:fleet/kanban/models/task_model.dart';
-import 'package:fleet/kanban/services/db.dart';
-import 'package:fleet/kanban/widgets/kanban_field.dart';
+import 'package:fleet/kanban/services/database_service.dart';
+import 'package:fleet/kanban/widgets/common/kanban_field.dart';
 import 'package:flutter/material.dart';
 
 class TaskScreen extends StatefulWidget {

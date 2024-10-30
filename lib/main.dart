@@ -1,4 +1,4 @@
-import 'package:fleet/kanban/board.dart';
+import 'package:fleet/kanban/views/board.dart';
 import 'package:flutter/material.dart';
 
 void main() {
