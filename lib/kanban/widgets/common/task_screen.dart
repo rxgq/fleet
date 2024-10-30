@@ -2,9 +2,10 @@ import 'package:fleet/kanban/controllers/board_controller.dart';
 import 'package:fleet/kanban/models/task_model.dart';
 import 'package:fleet/kanban/models/task_project_model.dart';
 import 'package:fleet/kanban/services/database_service.dart';
+import 'package:fleet/kanban/widgets/common/misc/fleet_close_icon.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_dropdown.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
-import 'package:fleet/kanban/widgets/common/misc/kanban_field.dart';
+import 'package:fleet/kanban/widgets/common/misc/fleet_field.dart';
 import 'package:flutter/material.dart';
 
 class TaskScreen extends StatefulWidget {
@@ -51,32 +52,13 @@ class _TaskScreenState extends State<TaskScreen> {
                   _title(),
                   const Spacer(),
                   _status(),
-                  _closeIcon(),
+                  const FleetCloseIcon(),
                 ],
               ),
 
               _description(),
               _projectDropdown()
             ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _closeIcon() {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () {
-          Navigator.pop(context);
-        },
-        child: const Padding(
-          padding: EdgeInsets.only(top: 10, right: 8),
-          child: Icon(
-            Icons.close,
-            color: Colors.grey,
-            size: 18,
           ),
         ),
       ),
@@ -110,8 +92,8 @@ class _TaskScreenState extends State<TaskScreen> {
   Widget _description() {
     return SizedBox(
       width: 480, height: 160,
-      child: KanbanField(
-        onSubmit: () async {
+      child: FleetField(
+        onClickOff: () async {
           await _db.updateDescription(widget.model, _descriptionController.text);
         }, 
         controller: _descriptionController
@@ -139,5 +121,4 @@ class _TaskScreenState extends State<TaskScreen> {
       ),
     );
   }
-
 }

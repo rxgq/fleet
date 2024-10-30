@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
 
-class KanbanField extends StatefulWidget {
-  const KanbanField({
+class FleetField extends StatefulWidget {
+  const FleetField({
     super.key, 
-    required this.onSubmit,
+    required this.onClickOff,
     required this.controller,
+    this.isSubmittable = false
   });
 
   final TextEditingController controller;
-  final VoidCallback onSubmit;
+  final VoidCallback onClickOff;
+  final bool isSubmittable;
 
   @override
-  State<KanbanField> createState() => _KanbanFieldState();
+  State<FleetField> createState() => _FleetFieldState();
 }
 
-class _KanbanFieldState extends State<KanbanField> {
+class _FleetFieldState extends State<FleetField> {
   final _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _focusNode.addListener(() {
-      if (!_focusNode.hasFocus) {
-        widget.onSubmit();
+      if (!_focusNode.hasFocus && !widget.isSubmittable) {
+        widget.onClickOff();
       }
     });
   }
@@ -47,11 +49,11 @@ class _KanbanFieldState extends State<KanbanField> {
         ),
         controller: widget.controller,
         onSubmitted: (_) {
-          widget.onSubmit();
+          widget.onClickOff();
         },
         textAlignVertical: TextAlignVertical.top,
-        maxLines: null,
-        expands: true,
+        maxLines: widget.isSubmittable ? 1 : null,
+        expands: widget.isSubmittable ? false : true,
         cursorColor: const Color.fromARGB(255, 195, 195, 195),
         decoration: InputDecoration(
           filled: true,

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class FleetText extends StatelessWidget {
   const FleetText({
-    super.key, 
-    required this.text, 
-    required this.size, 
-    required this.weight, 
+    super.key,
+    required this.text,
+    required this.size,
+    required this.weight,
     required this.colour
   });
 

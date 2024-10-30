@@ -1,7 +1,7 @@
 import 'package:fleet/kanban/models/task_model.dart';
 import 'package:fleet/kanban/services/database_service.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
-import 'package:fleet/kanban/widgets/common/misc/kanban_dialogue.dart';
+import 'package:fleet/kanban/widgets/common/misc/fleet_dialogue.dart';
 import 'package:flutter/material.dart';
 
 class TaskCard extends StatefulWidget {
@@ -163,7 +163,7 @@ class _TaskCardState extends State<TaskCard> {
               var taskTitle = widget.model.title;
               if (taskTitle.length > 30) taskTitle = widget.model.title.substring(0, 30);
 
-              return KanbanDialog(message: "delete task '$taskTitle'?", onClick: (option) async {
+              return FleetDialog(message: "delete task '$taskTitle'?", onClick: (option) async {
                 if (option == "no") return;
 
                 await _db.deleteTask(widget.model);

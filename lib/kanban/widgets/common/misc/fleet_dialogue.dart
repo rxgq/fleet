@@ -1,21 +1,24 @@
+import 'package:fleet/kanban/widgets/common/misc/fleet_close_icon.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
 import 'package:flutter/material.dart';
 
-class KanbanDialog extends StatefulWidget {
-  const KanbanDialog({
+class FleetDialog extends StatefulWidget {
+  const FleetDialog({
     super.key, 
-    required this.message,
-    required this.onClick,
+    this.message,
+    this.onClick,
+    this.displayItem,
   });
 
-  final String message;
-  final Function(String) onClick;
+  final String? message;
+  final Function(String)? onClick;
+  final Widget? displayItem;
 
   @override
-  State<KanbanDialog> createState() => _KanbanDialogState();
+  State<FleetDialog> createState() => _FleetDialogState();
 }
 
-class _KanbanDialogState extends State<KanbanDialog> {
+class _FleetDialogState extends State<FleetDialog> {
   bool _yesHovering = false;
   bool _noHovering = false;
 
@@ -30,30 +33,43 @@ class _KanbanDialogState extends State<KanbanDialog> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(4)
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _message(),
-              const Spacer(),
-
-              Row(
-                children: [
-                  _buildOption("yes", _yesHovering, (hovering) {
-                    setState(() {
-                      _yesHovering = hovering;
-                    });
-                  }),
-                  _buildOption("no", _noHovering, (hovering) {
-                    setState(() {
-                      _noHovering = hovering;
-                    });
-                  }),
-                ],
-              )
-            ],
-          ),
+          child: widget.displayItem == null ? _buildDefaultItems() : _buildDisplayItem()
         )
       ),
+    );
+  }
+
+  Widget _buildDisplayItem() {
+    return widget.displayItem!;
+  }
+
+  Widget _buildDefaultItems() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FleetCloseIcon(),
+          ],
+        ),
+        _message(),
+        const Spacer(),
+        Row(
+          children: [
+            _buildOption("yes", _yesHovering, (hovering) {
+              setState(() {
+                _yesHovering = hovering;
+              });
+            }),
+            _buildOption("no", _noHovering, (hovering) {
+              setState(() {
+                _noHovering = hovering;
+              });
+            }),
+          ],
+        )
+      ],
     );
   }
 
@@ -61,7 +77,7 @@ class _KanbanDialogState extends State<KanbanDialog> {
     return Padding(
       padding: const EdgeInsets.only(left: 80, top: 42),
       child: FleetText(
-        text: widget.message,
+        text: widget.message!,
         colour: const Color.fromARGB(255, 75, 75, 75),
         size: 14,
         weight: FontWeight.w300,
@@ -79,7 +95,7 @@ class _KanbanDialogState extends State<KanbanDialog> {
         child: GestureDetector(
           onTap: () {
             Navigator.pop(context);
-            widget.onClick(option);
+            widget.onClick!(option);
           },
           child: SizedBox(
             width: 28,

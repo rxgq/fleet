@@ -4,7 +4,7 @@ import 'package:fleet/kanban/services/database_service.dart';
 import 'package:fleet/kanban/widgets/add_task/add_task_button.dart';
 import 'package:fleet/kanban/widgets/add_task/add_task_field.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
-import 'package:fleet/kanban/widgets/common/misc/kanban_dialogue.dart';
+import 'package:fleet/kanban/widgets/common/misc/fleet_dialogue.dart';
 import 'package:fleet/kanban/widgets/common/task_screen.dart';
 import 'package:fleet/kanban/widgets/common/task_card.dart';
 import 'package:flutter/material.dart';
@@ -141,7 +141,7 @@ class TaskColumnState extends State<TaskColumn> {
                   showDialog(context: context, builder: (_) {
                     final subMsg = "the ${widget.model.tasks.length} task(s) in this column will also be deleted";
 
-                    return KanbanDialog(
+                    return FleetDialog(
                       message: "delete column '${widget.model.title}'?\n${widget.model.tasks.isNotEmpty ? subMsg : ""}", 
                       onClick: (final option) async {
                         if (option == "no") return;

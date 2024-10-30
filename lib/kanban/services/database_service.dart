@@ -249,4 +249,22 @@ final class DatabaseService {
       return false;
     }
   }
+
+  Future<bool> createProject(String title) async {
+    try {
+      await _db.open();
+
+      final result = await _db.conn!.execute(
+        "insert into projects (title) values ('$title')"
+      );
+
+      await _db.close();
+
+      _logger.LogInfo("Created project '$title'");
+      return result.affectedRows != 0;
+    } catch (ex) {
+      _logger.LogError("Error creating project: $ex");
+      return false;
+    }
+  }
 }

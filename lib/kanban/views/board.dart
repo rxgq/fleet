@@ -1,6 +1,8 @@
 import 'package:fleet/kanban/services/database_service.dart';
 import 'package:fleet/kanban/controllers/board_controller.dart';
 import 'package:fleet/kanban/widgets/add_column/add_column_field.dart';
+import 'package:fleet/kanban/widgets/add_project/add_project_widget.dart';
+import 'package:fleet/kanban/widgets/common/misc/fleet_dialogue.dart';
 import 'package:fleet/kanban/widgets/common/task_bar.dart';
 import 'package:fleet/kanban/widgets/common/task_column.dart';
 import 'package:fleet/kanban/widgets/weather/weather_info.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 import '../services/weather/models/weather_model.dart';
 import '../services/weather/utils/weather_service.dart';
 import '../widgets/add_column/add_column_button.dart';
+import '../widgets/common/misc/fleet_button.dart';
 
 class BoardView extends StatefulWidget {
   const BoardView({
@@ -56,6 +59,22 @@ class _BoardViewState extends State<BoardView> {
             children: [
               _columns(),
               _addColumnButton(),
+              FleetButton(
+                onClick: () {
+                  showDialog(context: context, builder: (_) {
+                    return FleetDialog(
+                      displayItem: AddProjectWidget(
+                        onProjectAdded: (project) async {
+                          Navigator.pop(context);
+                          await _db.createProject(project);
+                          setState(() {});
+                        }
+                      ),
+                    );
+                  });
+                }, 
+                text: "new project"
+              ),
           
               const Spacer(),
               WeatherInfo(model: _weather!),
