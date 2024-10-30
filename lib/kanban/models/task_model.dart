@@ -1,4 +1,4 @@
-class TaskModel {
+final class TaskModel {
   final int id;
   final String title;
   final String description;
@@ -19,7 +19,7 @@ class TaskModel {
     return TaskModel(
       id: map["id"],
       title: map["title"],
-      columnId: map["status"],
+      columnId: map["column_id"],
       description: map["description"],
       position: map["position"],
       status: ""

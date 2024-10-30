@@ -11,15 +11,11 @@ class BoardController {
 
   List<TaskColumnModel> columns = [];
 
-  void setColumns(List<TaskColumnModel> newColumns) {
+  void setColumns(final List<TaskColumnModel> newColumns) {
     columns = newColumns;
   }
 
-  void getColumn() {
-
-  }
-
-  void addTasks(List<TaskModel> tasks) {
+  void addTasks(final List<TaskModel> tasks) {
     for (final task in tasks) {
       for (final col in columns) {
         if (col.id != task.columnId) continue;

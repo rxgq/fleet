@@ -38,6 +38,7 @@ class _BoardViewState extends State<BoardView> {
     _weather = await _wt.getWeather();
 
     final columns = await _db.getColumns();
+
     _board.setColumns(columns);
 
     final tasks = await _db.getTasks();
