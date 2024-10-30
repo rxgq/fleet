@@ -1,4 +1,4 @@
-import 'package:fleet/kanban/widgets/common/fleet_text.dart';
+import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
 import 'package:flutter/material.dart';
 
 class KanbanDialog extends StatefulWidget {

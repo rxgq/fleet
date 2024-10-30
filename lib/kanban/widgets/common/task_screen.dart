@@ -1,7 +1,8 @@
 import 'package:fleet/kanban/models/task_model.dart';
 import 'package:fleet/kanban/services/database_service.dart';
-import 'package:fleet/kanban/widgets/common/fleet_text.dart';
-import 'package:fleet/kanban/widgets/common/kanban_field.dart';
+import 'package:fleet/kanban/widgets/common/misc/fleet_dropdown.dart';
+import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
+import 'package:fleet/kanban/widgets/common/misc/kanban_field.dart';
 import 'package:flutter/material.dart';
 
 class TaskScreen extends StatefulWidget {
@@ -50,7 +51,8 @@ class _TaskScreenState extends State<TaskScreen> {
                 ],
               ),
 
-              _description()
+              _description(),
+              _projectDropdown()
             ],
           ),
         ),
@@ -84,12 +86,24 @@ class _TaskScreenState extends State<TaskScreen> {
 
   Widget _description() {
     return SizedBox(
-      width: 400, height: 120,
+      width: 480, height: 160,
       child: KanbanField(
         onSubmit: () async {
           await _db.updateDescription(widget.model, _descriptionController.text);
         }, 
         controller: _descriptionController
+      ),
+    );
+  }
+
+  Widget _projectDropdown() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: FleetDropdown(
+        items: const ["Web Applications", "Object Oriented", "Action Enquiry"], 
+        onChange: (item) {
+      
+        }
       ),
     );
   }

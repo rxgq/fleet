@@ -3,8 +3,8 @@ import 'package:fleet/kanban/models/task_model.dart';
 import 'package:fleet/kanban/services/database_service.dart';
 import 'package:fleet/kanban/widgets/add_task/add_task_button.dart';
 import 'package:fleet/kanban/widgets/add_task/add_task_field.dart';
-import 'package:fleet/kanban/widgets/common/fleet_text.dart';
-import 'package:fleet/kanban/widgets/common/kanban_dialogue.dart';
+import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
+import 'package:fleet/kanban/widgets/common/misc/kanban_dialogue.dart';
 import 'package:fleet/kanban/widgets/common/task_screen.dart';
 import 'package:fleet/kanban/widgets/common/task_card.dart';
 import 'package:flutter/material.dart';
@@ -132,18 +132,7 @@ class TaskColumnState extends State<TaskColumn> {
         width: 240,
         child: Row(
           children: [
-            !_isEditingColumn ? Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: 160,
-                child: FleetText(
-                  text: widget.model.title,
-                  size: 14,
-                  colour: const Color.fromARGB(255, 110, 110, 110),
-                  weight: FontWeight.w500,
-                ),
-              ),
-            ) : _buildColumnTitleField(),
+            !_isEditingColumn ? _columnTitle() : _buildColumnTitleField(),
             const Spacer(),
             if (_isHoveringTitle) MouseRegion(
               cursor: SystemMouseCursors.click,
@@ -199,6 +188,32 @@ class TaskColumnState extends State<TaskColumn> {
                 ),
               ),
             ) 
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _columnTitle() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        width: 160,
+        child: Row(
+          children: [
+            FleetText(
+              text: widget.model.title,
+              size: 14,
+              colour: const Color.fromARGB(255, 110, 110, 110),
+              weight: FontWeight.w500,
+            ),
+            const SizedBox(width: 8),
+            FleetText(
+              text: "${widget.model.tasks.length}",
+              size: 14,
+              colour: const Color.fromARGB(255, 110, 110, 110),
+              weight: FontWeight.w500,
+            ),
           ],
         ),
       ),
