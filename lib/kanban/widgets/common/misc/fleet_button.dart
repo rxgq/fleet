@@ -1,7 +1,7 @@
 import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../constants.dart';
+import '../../../../globals.dart';
 
 class FleetButton extends StatefulWidget {
   const FleetButton({super.key, required this.onClick, required this.text});

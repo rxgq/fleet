@@ -1,4 +1,4 @@
-import 'package:fleet/constants.dart';
+import 'package:fleet/globals.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
 import 'package:flutter/material.dart';
 

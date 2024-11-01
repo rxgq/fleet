@@ -14,6 +14,7 @@ class BoardController {
   List<TaskProjectModel> projects = [];
 
   void setColumns(final List<TaskColumnModel> newColumns) {
+    newColumns.sort((a, b) => a.position.compareTo(b.position));
     columns = newColumns;
   }
 

@@ -23,7 +23,7 @@ final class DatabaseService {
         "task_position": col[2]
       })).toList();
       
-      _logger.LogInfo("Got ${columns.length} column(s).");
+      _logger.LogInfo("Got '${columns.length}' column(s).");
       return columns;
     } catch (ex) {
       _logger.LogError("Error getting columns: $ex");
@@ -54,7 +54,7 @@ final class DatabaseService {
         });
       }).toList();
 
-      _logger.LogInfo("Got ${tasks.length} task(s).");
+      _logger.LogInfo("Got '${tasks.length}' task(s).");
       return tasks;
     } catch (ex) {
       _logger.LogError("Error getting tasks: $ex");
@@ -72,7 +72,7 @@ final class DatabaseService {
         "project": row[1]
       })).toList();
 
-      _logger.LogInfo("Got ${projects.length} projects(s).");
+      _logger.LogInfo("Got '${projects.length}' projects(s).");
       return projects;
 
     } catch (ex) {
@@ -105,7 +105,7 @@ final class DatabaseService {
       await refreshBoard();
       await _db.close();
 
-      _logger.LogInfo("Updated task: ${task.title} status to ${column.title}.");
+      _logger.LogInfo("Updated task '${task.title}' status to '${column.title}'.");
       return result.affectedRows != 0;
     } catch (ex) {
       _logger.LogError("Error updating task status: $ex");
@@ -124,7 +124,7 @@ final class DatabaseService {
       await refreshBoard();
       await _db.close();
 
-      _logger.LogInfo("Updated task ${task.title} description.");
+      _logger.LogInfo("Updated task '${task.title}' description.");
       return result.affectedRows != 0;
     } catch (ex) {
       _logger.LogError("Error updating task description: $ex");
@@ -162,7 +162,7 @@ final class DatabaseService {
       await refreshBoard();
       await _db.close();
 
-      _logger.LogInfo("Created task $title");
+      _logger.LogInfo("Created task '$title'.");
       return result.affectedRows != 0;
     } catch (ex) {
       _logger.LogError("Error creating task: $ex");
@@ -181,7 +181,7 @@ final class DatabaseService {
       await refreshBoard();
       await _db.close();
 
-      _logger.LogInfo("Deleted task ${task.title}");
+      _logger.LogInfo("Deleted task '${task.title}'.");
       return result.affectedRows != 0;
     } catch (ex) {
       _logger.LogError("Error deleting task: $ex");
@@ -204,7 +204,7 @@ final class DatabaseService {
       await refreshBoard();
       await _db.close();
 
-      _logger.LogInfo("Created column $title");
+      _logger.LogInfo("Created column '$title'.");
       return result.affectedRows != 0;
     } catch (ex) {
       _logger.LogError("Error creating column: $ex");
@@ -223,7 +223,7 @@ final class DatabaseService {
       await refreshBoard();
       await _db.close();
 
-      _logger.LogInfo("Deleted column ${column.title}");
+      _logger.LogInfo("Deleted column '${column.title}'.");
       return result.affectedRows != 0;
     } catch (ex) {
       _logger.LogError("Error deleting column: $ex");
@@ -242,7 +242,7 @@ final class DatabaseService {
       await refreshBoard();
       await _db.close();
 
-      _logger.LogInfo("Updated column ${column.title} to $title");
+      _logger.LogInfo("Updated column '${column.title}' to '$title'.");
       return result.affectedRows != 0;
     } catch (ex) {
       _logger.LogError("Error updating column title: $ex");
@@ -260,7 +260,7 @@ final class DatabaseService {
 
       await _db.close();
 
-      _logger.LogInfo("Created project '$title'");
+      _logger.LogInfo("Created project '$title'.");
       return result.affectedRows != 0;
     } catch (ex) {
       _logger.LogError("Error creating project: $ex");

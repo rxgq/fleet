@@ -9,7 +9,7 @@ import 'package:fleet/kanban/widgets/common/task_screen.dart';
 import 'package:fleet/kanban/widgets/common/task_card.dart';
 import 'package:flutter/material.dart';
 
-import '../../../constants.dart';
+import '../../../globals.dart';
 
 class TaskColumn extends StatefulWidget {
   const TaskColumn({
@@ -65,7 +65,7 @@ class TaskColumnState extends State<TaskColumn> {
             },
             child: Container(
               width: 240,
-              height: MediaQuery.sizeOf(context).height - 60,
+              height: MediaQuery.sizeOf(context).height - 60 - (showConsole ? consoleHeight : 0),
               decoration: BoxDecoration(
                 color: constGrey,
                 borderRadius: BorderRadius.circular(2),
@@ -140,9 +140,10 @@ class TaskColumnState extends State<TaskColumn> {
                 onTap: () async {
                   showDialog(context: context, builder: (_) {
                     final subMsg = "the ${widget.model.tasks.length} task(s) in this column will also be deleted";
+                    final msg = "delete column '${widget.model.title}'?\n${widget.model.tasks.isNotEmpty ? subMsg : ""}";
 
                     return FleetDialog(
-                      message: "delete column '${widget.model.title}'?\n${widget.model.tasks.isNotEmpty ? subMsg : ""}", 
+                      message: msg, 
                       onClick: (final option) async {
                         if (option == "no") return;
       
@@ -154,7 +155,7 @@ class TaskColumnState extends State<TaskColumn> {
                         await _db.deleteColumn(widget.model);
 
                         widget.onUpdate();
-                      }
+                      },
                     );
                   });
                 },

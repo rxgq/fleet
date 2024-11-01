@@ -77,6 +77,7 @@ class _FleetDialogState extends State<FleetDialog> {
     return Padding(
       padding: const EdgeInsets.only(left: 80, top: 42),
       child: FleetText(
+        maxLines: null,
         text: widget.message!,
         colour: const Color.fromARGB(255, 75, 75, 75),
         size: 14,

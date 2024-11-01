@@ -6,13 +6,15 @@ class FleetText extends StatelessWidget {
     required this.text,
     required this.size,
     required this.weight,
-    required this.colour
+    required this.colour,
+    this.maxLines = 1
   });
 
   final String text;
   final double size;
   final FontWeight weight;
   final Color colour;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class FleetText extends StatelessWidget {
         fontFamily: "Inter"
       ),
       overflow: TextOverflow.ellipsis,
-      maxLines: 1,
+      maxLines: maxLines,
     );
   }
 }

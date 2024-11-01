@@ -5,7 +5,7 @@ final class Logger {
   static const String _resetColor = '\x1B[0m';
 
   Future<void> LogInfo(final String message) async {
-    print("${_infoColor}Info: $message$_resetColor");
+    print("${_infoColor}Info:  $message$_resetColor");
   }
 
   Future<void> LogEvent(final String event) async {

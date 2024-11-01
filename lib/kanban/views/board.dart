@@ -1,12 +1,16 @@
 import 'package:fleet/kanban/services/database_service.dart';
 import 'package:fleet/kanban/controllers/board_controller.dart';
+import 'package:fleet/kanban/services/logger.dart';
 import 'package:fleet/kanban/widgets/add_column/add_column_field.dart';
 import 'package:fleet/kanban/widgets/add_project/add_project_widget.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_dialogue.dart';
 import 'package:fleet/kanban/widgets/common/task_bar.dart';
 import 'package:fleet/kanban/widgets/common/task_column.dart';
+import 'package:fleet/kanban/widgets/terminal/fleet_cli.dart';
 import 'package:fleet/kanban/widgets/weather/weather_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../globals.dart';
 import '../services/weather/models/weather_model.dart';
 import '../services/weather/utils/weather_service.dart';
 import '../widgets/add_column/add_column_button.dart';
@@ -23,6 +27,7 @@ class BoardView extends StatefulWidget {
 
 class _BoardViewState extends State<BoardView> {
   final _db = DatabaseService();
+  final _logger = Logger();
   final _board = BoardController();
   final _wt = WeatherService();
 
@@ -32,13 +37,50 @@ class _BoardViewState extends State<BoardView> {
   final _columnTitleController = TextEditingController();
   bool _isAddingColumn = false;
 
+  final consoleNode = FocusNode();
+  final consoleInputNode = FocusNode();
+  final commandController = TextEditingController();
+
   @override
   void initState() {
+    RawKeyboard.instance.addListener(_handleKeyEvent);
+    consoleNode.requestFocus();
     _initBoard();
     super.initState();
   }
 
+  @override
+  void dispose() {
+    RawKeyboard.instance.removeListener(_handleKeyEvent);
+    super.dispose();
+  }
+
+  void _handleKeyEvent(RawKeyEvent event) {
+    if (!(event is RawKeyDownEvent)) return;
+
+    bool isControlPressed = RawKeyboard.instance.keysPressed.contains(LogicalKeyboardKey.controlLeft);
+    bool isBackquotePressed = event.logicalKey == LogicalKeyboardKey.backquote;
+
+    if (!isControlPressed || !isBackquotePressed) {
+      return;
+    }
+
+    setState(() {
+      showConsole = !showConsole;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (showConsole) {
+        FocusScope.of(context).requestFocus(consoleInputNode);
+      } else {
+        FocusScope.of(context).unfocus();
+      }
+    });
+  }
+
   Future _initBoard() async {
+    _logger.LogEvent("Hello, Sir!");
+
     _weather = await _wt.getWeather();
     await _db.refreshBoard();
 
@@ -58,30 +100,44 @@ class _BoardViewState extends State<BoardView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _columns(),
-              _addColumnButton(),
-              FleetButton(
-                onClick: () {
-                  showDialog(context: context, builder: (_) {
-                    return FleetDialog(
-                      displayItem: AddProjectWidget(
-                        onProjectAdded: (project) async {
-                          Navigator.pop(context);
-                          await _db.createProject(project);
-                          setState(() {});
-                        }
-                      ),
-                    );
-                  });
-                }, 
-                text: "new project"
+              
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _addColumnButton(),
+                  _newProjectButton(),
+                ],
               ),
           
               const Spacer(),
               WeatherInfo(model: _weather!),
             ],
           ),
+          if (showConsole) FleetCli(
+            controller: commandController,
+            consoleNode: consoleInputNode,
+          )
         ],
       ) : const SizedBox()
+    );
+  }
+
+  Widget _newProjectButton() {
+    return FleetButton(
+      onClick: () {
+        showDialog(context: context, builder: (_) {
+          return FleetDialog(
+            displayItem: AddProjectWidget(
+              onProjectAdded: (project) async {
+                Navigator.pop(context);
+                await _db.createProject(project);
+                await _db.refreshBoard();
+              }
+            ),
+          );
+        });
+      }, 
+      text: "new project"
     );
   }
 
