@@ -267,4 +267,22 @@ final class DatabaseService {
       return false;
     }
   }
+
+  Future<bool> deleteProject(TaskProjectModel project) async {
+    try {
+      await _db.open();
+
+      final result = await _db.conn!.execute(
+        "delete from projects where project_id = '${project.projectId}'"
+      );
+
+      await _db.close();
+
+      _logger.LogInfo("Deleted project '${project.title}'.");
+      return result.affectedRows != 0;
+    } catch (ex) {
+      _logger.LogError("Error deleting project: $ex");
+      return false;
+    }
+  }
 }

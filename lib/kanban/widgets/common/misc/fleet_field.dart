@@ -5,12 +5,14 @@ class FleetField extends StatefulWidget {
     super.key, 
     required this.onClickOff,
     required this.controller,
-    this.isSubmittable = false
+    this.isSubmittable = false,
+    this.obscure = false
   });
 
   final TextEditingController controller;
   final VoidCallback onClickOff;
   final bool isSubmittable;
+  final bool obscure;
 
   @override
   State<FleetField> createState() => _FleetFieldState();
@@ -40,6 +42,7 @@ class _FleetFieldState extends State<FleetField> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
+        obscureText: widget.obscure,
         focusNode: _focusNode,
         style: const TextStyle(
           color: Color.fromARGB(255, 92, 92, 92),

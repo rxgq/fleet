@@ -1,4 +1,5 @@
 import 'package:fleet/kanban/views/board.dart';
+import 'package:fleet/kanban/views/login.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,7 +13,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: BoardView()
+      home: LoginView()
     );
   }
 }

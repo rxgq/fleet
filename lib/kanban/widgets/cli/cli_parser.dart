@@ -1,6 +1,11 @@
+import 'package:fleet/kanban/controllers/board_controller.dart';
+import 'package:fleet/kanban/services/database_service.dart';
 import 'package:flutter/material.dart';
 
 final class CliParser {
+  final _db = DatabaseService();
+  final _board = BoardController();
+
   List<String> out = [];
 
   final BuildContext context;
@@ -37,6 +42,7 @@ final class CliParser {
 
     return switch (argv[0].toLowerCase()) {
       "cls"  => cls(argc, argv),
+      "crp"  => crp(argc, argv),
       // "crt"  => crt(argc, argv),
       // "crc"  => crc(argc, argv),
       // "rmt"  => rmt(argc, argv),
@@ -103,93 +109,29 @@ final class CliParser {
     out.clear();
   }
 
-  // Future crt(int argc, List<String> argv) async {
-  //   if (argc != 3) {
-  //     write("crt takes 2 arguments: crt <task> <column>");
-  //     return;
-  //   }
+  Future crp(int argc, List<String> argv) async {
+    if (argc != 2) {
+      write("crp takes one argument <project>");
+      return;
+    }
 
-  //   var column = tryGetColumn(argv[2]);
-  //   if (column == null) return;
+    var project = argv[1];
+    await _db.createProject(project);
+    await _db.refreshBoard();
+  }
 
-  //   var board = Provider.of<BoardProvider>(context, listen: false);
-  //   await board.createTask(argv[1], argv[2]);
-  // }
+    Future rmp(int argc, List<String> argv) async {
+    if (argc != 2) {
+      write("rmp takes one argument <project>");
+      return;
+    }
 
-  // Future crc(int argc, List<String> argv) async {
-  //   if (argc != 2) {
-  //     write("crc takes 1 argument: crc <column>");
-  //     return;
-  //   }
+    var projectName = argv[1];
 
-  //   var board = Provider.of<BoardProvider>(context, listen: false);
-  //   await board.createColumn(argv[1]);
-  // }
+    var project = _board.projects.where((x) => x.title == projectName).firstOrNull;
+    if (project == null) return;
 
-  // Future rmt(int argc, List<String> argv) async {
-  //   if (argc != 2) {
-  //     write("rmt takes 1 argument: rmt <task>");
-  //     return;
-  //   }
-
-  //   var task = tryGetTask(argv[1]);
-  //   if (task == null) return;
-
-  //   var board = Provider.of<BoardProvider>(context, listen: false);
-  //   await board.deleteTask(task);
-  // }
-  
-  // Future rmc(int argc, List<String> argv) async {
-  //   if (argc != 2) {
-  //     write("rmc takes 1 argument: rmc <column>");
-  //     return;
-  //   }
-
-  //   var column = tryGetColumn(argv[1]);
-  //   if (column == null) return;
-
-  //   var board = Provider.of<BoardProvider>(context, listen: false);
-  //   await board.deleteColumn(column);
-  // }
-
-  // Future mov(int argc, List<String> argv) async {
-  //   if (argc != 3) {
-  //     write("mv takes 2 arguments: mv <task> <column>");
-  //     return;
-  //   }
-
-  //   var card = tryGetTask(argv[1]);
-  //   if (card == null) return;
-
-  //   var column = tryGetColumn(argv[2]);
-  //   if (column == null) return;
-
-  //   var board = Provider.of<BoardProvider>(context, listen: false);
-  //   await board.moveTask(card, column.title);
-  // }
-
-
-  // ColumnModel? tryGetColumn(String title) {
-  //   var board = Provider.of<BoardProvider>(context, listen: false);
-
-  //   var column = board.getColumn(title);
-  //   if (column == null) {
-  //     write("column '$title' not found");
-  //     return null;
-  //   }
-
-  //   return column;
-  // }
-
-  // TaskModel? tryGetTask(String header) {
-  //   var board = Provider.of<BoardProvider>(context, listen: false);
-
-  //   var task = board.getTask(header);
-  //   if (task == null) {
-  //     write("task '$header' not found");
-  //     return null;
-  //   }
-
-  //   return task;
-  // }
+    await _db.deleteProject(project);
+    await _db.refreshBoard();
+  }
 }
