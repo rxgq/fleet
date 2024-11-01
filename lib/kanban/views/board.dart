@@ -2,8 +2,6 @@ import 'package:fleet/kanban/services/database_service.dart';
 import 'package:fleet/kanban/controllers/board_controller.dart';
 import 'package:fleet/kanban/services/logger.dart';
 import 'package:fleet/kanban/widgets/add_column/add_column_field.dart';
-import 'package:fleet/kanban/widgets/add_project/add_project_widget.dart';
-import 'package:fleet/kanban/widgets/common/misc/fleet_dialogue.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
 import 'package:fleet/kanban/widgets/common/task_bar.dart';
 import 'package:fleet/kanban/widgets/common/task_column.dart';
@@ -15,7 +13,6 @@ import '../../globals.dart';
 import '../services/weather/models/weather_model.dart';
 import '../services/weather/utils/weather_service.dart';
 import '../widgets/add_column/add_column_button.dart';
-import '../widgets/common/misc/fleet_button.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class BoardView extends StatefulWidget {
@@ -134,7 +131,6 @@ class _BoardViewState extends State<BoardView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _addColumnButton(),
-                  _newProjectButton(),
                 ],
               ),
           
@@ -148,25 +144,6 @@ class _BoardViewState extends State<BoardView> {
           )
         ],
       ) : _loadingWidget()
-    );
-  }
-
-  Widget _newProjectButton() {
-    return FleetButton(
-      onClick: () {
-        showDialog(context: context, builder: (_) {
-          return FleetDialog(
-            displayItem: AddProjectWidget(
-              onProjectAdded: (project) async {
-                Navigator.pop(context);
-                await _db.createProject(project);
-                await _db.refreshBoard();
-              }
-            ),
-          );
-        });
-      }, 
-      text: "new project"
     );
   }
 
