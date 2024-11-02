@@ -5,6 +5,7 @@ final class TaskModel {
   final String title;
   final String description;
   final int position;
+  final int priority;
 
   int columnId;
   String status;
@@ -16,6 +17,7 @@ final class TaskModel {
     required this.title,
     required this.description,
     required this.position,
+    required this.priority,
     required this.columnId,
     this.status = "",
     this.project,
@@ -34,6 +36,7 @@ final class TaskModel {
       columnId: map["column_id"],
       description: map["description"],
       position: map["position"],
+      priority: map["priority"],
       project: (map["project"] == null || map["project_id"] == null) ? null : project,
     );
   }

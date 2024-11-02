@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:fleet/kanban/views/board.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_field.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';

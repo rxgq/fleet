@@ -48,6 +48,7 @@ final class CliParser {
       "rmt"    => rmt(argc, argv),
       "mov"    => mov(argc, argv),
       "idxc"   => idxc(argc, argv),
+      "stp"    => stp(argc, argv),
 
       "cls"    => cls(argc, argv),
       "echo"   => echo(argc, argv),
@@ -65,6 +66,7 @@ final class CliParser {
     write("rmc  <1>                deletes a column");
     write("mov  <1> <2>            moves a task to another column");
     write("idxc <1> <2>            updates a column index position");
+    write("stp  <1> <2>            updates a task priority");
   }
 
   Future<void> crp(int argc, List<String> argv) async {
@@ -161,7 +163,7 @@ final class CliParser {
     await _db.refreshBoard();
   }
 
-  Future<void> idxc (int argc, List<String> argv) async {
+  Future<void> idxc(int argc, List<String> argv) async {
     if (argv.length != 3) {
       write("mov takes two arguments <column_name> <position>");
       return;
@@ -174,6 +176,27 @@ final class CliParser {
     }
 
     await _db.updateColumnPosition(column, int.parse(argv[2]));
+    await _db.refreshBoard();
+  }
+
+  Future<void> stp(int argc, List<String> argv) async {
+    if (argv.length != 3) {
+      write("stp takes two arguments <task_name> <priority>");
+      return;
+    }
+
+    var task = _board.getTask(argv[1]);
+    if (task == null) {
+      write("task '${argv[1]}' not found.");
+      return;
+    }
+
+    if (int.tryParse(argv[2]) == null) {
+      write("'${argv[2]}' is not a valid priority.");
+      return;
+    }
+
+    await _db.updateTaskPriority(task, int.parse(argv[2]));
     await _db.refreshBoard();
   }
   

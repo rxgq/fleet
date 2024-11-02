@@ -48,5 +48,9 @@ class BoardController {
         col.tasks.add(task);
       }
     }
+
+    for (var column in columns) {
+      column.tasks.sort((a, b) => b.priority.compareTo(a.priority));
+    }
   }
 }

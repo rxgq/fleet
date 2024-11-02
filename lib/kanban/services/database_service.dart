@@ -49,6 +49,7 @@ final class DatabaseService {
           "title": row[2],
           "description": row[3],
           "position": row[4],
+          "priority": row[6],
           "project_id": project?.projectId,
           "project": project?.title,
         });
@@ -144,6 +145,25 @@ final class DatabaseService {
       await _db.close();
 
       _logger.LogInfo("Updated task '${task.title}' project to '${project.title}'.");
+      return result.affectedRows != 0;
+    } catch (ex) {
+      _logger.LogError("Error updating task project: $ex");
+      return false;
+    }
+  }
+
+  Future<bool> updateTaskPriority(final TaskModel task, final int priority) async {
+    try {
+      await _db.open();
+
+      final result = await _db.conn!.execute(
+        "update tasks set priority  = '$priority' where task_id = ${task.id}",
+      );
+
+      await refreshBoard();
+      await _db.close();
+
+      _logger.LogInfo("Updated task '${task.title}' priority to '$priority'.");
       return result.affectedRows != 0;
     } catch (ex) {
       _logger.LogError("Error updating task project: $ex");
@@ -250,14 +270,13 @@ final class DatabaseService {
     }
   }
 
-Future<bool> updateColumnPosition(TaskColumnModel column, int newPosition) async {
+Future<bool> updateColumnPosition(final TaskColumnModel column, final int newPosition) async {
   try {
     await _db.open();
 
     int currentPosition = column.position;
 
     if (currentPosition == newPosition) {
-      _logger.LogInfo("No position change for column '${column.title}'.");
       await _db.close();
       return true;
     }
@@ -290,7 +309,7 @@ Future<bool> updateColumnPosition(TaskColumnModel column, int newPosition) async
 }
 
 
-  Future<bool> createProject(String title) async {
+  Future<bool> createProject(final String title) async {
     try {
       await _db.open();
 
@@ -308,7 +327,7 @@ Future<bool> updateColumnPosition(TaskColumnModel column, int newPosition) async
     }
   }
 
-  Future<bool> deleteProject(TaskProjectModel project) async {
+  Future<bool> deleteProject(final TaskProjectModel project) async {
     try {
       await _db.open();
 

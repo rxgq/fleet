@@ -63,8 +63,17 @@ class _TaskCardState extends State<TaskCard> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _taskTitle(constraints),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _taskTitle(constraints),
+                _taskProject(),
+                const Spacer(),
+                _taskPriority(),
+              ],
+            ),
             const Spacer(),
+
             Column(
               children: [
                 if (_isHovering) _buildInfoIcon(),
@@ -88,10 +97,13 @@ class _TaskCardState extends State<TaskCard> {
           color: const Color.fromARGB(255, 248, 248, 248),
           borderRadius: BorderRadius.circular(2),
         ),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _taskTitle(constraints)
+            _taskTitle(constraints),
+            _taskProject(),
+            const Spacer(),
+            _taskPriority(),
           ],
         ),
       ),
@@ -108,10 +120,13 @@ class _TaskCardState extends State<TaskCard> {
           color: const Color.fromARGB(255, 255, 255, 255),
           borderRadius: BorderRadius.circular(2),
         ),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _taskTitle(constraints)
+            _taskTitle(constraints),
+            _taskProject(),
+            const Spacer(),
+            _taskPriority(),
           ],
         ),
       ),
@@ -120,7 +135,7 @@ class _TaskCardState extends State<TaskCard> {
 
   Widget _taskTitle(BoxConstraints constraints) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(left: 8, top: 8),
       child: SizedBox(
         width: constraints.maxWidth - 50,
         child: FleetText(
@@ -129,6 +144,30 @@ class _TaskCardState extends State<TaskCard> {
           colour: Colors.grey,
           weight: FontWeight.w300,
         ),
+      ),
+    );
+  }
+
+  Widget _taskProject() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0),
+      child: FleetText(
+        text: widget.model.project == null ? "" : widget.model.project!.title, 
+        size: 12, 
+        weight: FontWeight.w300, 
+        colour: Colors.grey
+      ),
+    );
+  }
+
+  Widget _taskPriority() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: FleetText(
+        text: widget.model.priority.toString(), 
+        size: 14, 
+        weight: FontWeight.w500, 
+        colour: Colors.grey
       ),
     );
   }
