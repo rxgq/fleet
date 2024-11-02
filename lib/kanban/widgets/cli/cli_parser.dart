@@ -124,7 +124,19 @@ final class CliParser {
   }
 
   Future<void> rmt(int argc, List<String> argv) async {
+    if (argv.length != 2) {
+      write("rmt takes one argument <task_name>");
+      return;
+    }
+
     var task = _board.getTask(argv[1]);
+    if (task == null) {
+      write("task '${argv[1]}' not found.");
+      return;
+    }
+
+    await _db.deleteTask(task);
+    await _db.refreshBoard();
   }
   
   void echo(int argc, List<String> argv) {
