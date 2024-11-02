@@ -47,6 +47,7 @@ final class CliParser {
       "crt"    => crt(argc, argv),
       "rmt"    => rmt(argc, argv),
       "mov"    => mov(argc, argv),
+      "idxc"   => idxc(argc, argv),
 
       "cls"    => cls(argc, argv),
       "echo"   => echo(argc, argv),
@@ -57,15 +58,13 @@ final class CliParser {
     };
   }
 
-  void help() {
-    write("cls          clears the console");
-    write("echo         writes back the users input");
-    
-    write("crt <1> <2>  creates a task in a column");
-    write("crc <1>      creates a column");
-    write("rmt <1>      deletes a task");
-    write("rmc <1>      deletes a column");
-    write("mov <1> <2>  moves a task to another column");
+  void help() {    
+    write("crt  <1> <2> <3?> <4?>  creates a task in a column with optional project and position");
+    write("crc  <1> <2?>           creates a column with an optional position");
+    write("rmt  <1>                deletes a task");
+    write("rmc  <1>                deletes a column");
+    write("mov  <1> <2>            moves a task to another column");
+    write("idxc <1> <2>            updates a column index position");
   }
 
   Future<void> crp(int argc, List<String> argv) async {
@@ -95,7 +94,7 @@ final class CliParser {
   }
 
   Future<void> crt(int argc, List<String> argv) async {
-    if (argv.length != 3 && argv.length != 4) {
+    if (argv.length != 3 && argv.length != 5) {
       write("crt takes at least 2 arguments <task_name> <column_name>");
       return;
     }
@@ -120,7 +119,7 @@ final class CliParser {
     var task = _board.getTask(taskName);
     if (task == null) return;
 
-    if (project != null) await _db.updateProject(task, project);
+    if (project != null) await _db.updateTaskProject(task, project);
     await _db.refreshBoard();
   }
 
@@ -158,7 +157,23 @@ final class CliParser {
       return;
     }
 
-    await _db.updateStatus(task, column);
+    await _db.updateTaskStatus(task, column);
+    await _db.refreshBoard();
+  }
+
+  Future<void> idxc (int argc, List<String> argv) async {
+    if (argv.length != 3) {
+      write("mov takes two arguments <column_name> <position>");
+      return;
+    }
+
+    var column = _board.getColumn(argv[1]);
+    if (column == null) {
+      write("task '${argv[2]}' not found.");
+      return;
+    }
+
+    await _db.updateColumnPosition(column, int.parse(argv[2]));
     await _db.refreshBoard();
   }
   

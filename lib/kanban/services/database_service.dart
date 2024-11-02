@@ -94,7 +94,7 @@ final class DatabaseService {
     _logger.LogInfo("Refreshed board.\n");
   }
 
-  Future<bool> updateStatus(final TaskModel task, final TaskColumnModel column) async {
+  Future<bool> updateTaskStatus(final TaskModel task, final TaskColumnModel column) async {
     try {
       await _db.open();
 
@@ -113,7 +113,7 @@ final class DatabaseService {
     }
   }
 
-  Future<bool> updateDescription(final TaskModel task, final String description) async {
+  Future<bool> updateTaskDescription(final TaskModel task, final String description) async {
     try {
       await _db.open();
 
@@ -132,7 +132,7 @@ final class DatabaseService {
     }
   }
   
-  Future<bool> updateProject(final TaskModel task, final TaskProjectModel project) async {
+  Future<bool> updateTaskProject(final TaskModel task, final TaskProjectModel project) async {
     try {
       await _db.open();
 
@@ -249,6 +249,46 @@ final class DatabaseService {
       return false;
     }
   }
+
+Future<bool> updateColumnPosition(TaskColumnModel column, int newPosition) async {
+  try {
+    await _db.open();
+
+    int currentPosition = column.position;
+
+    if (currentPosition == newPosition) {
+      _logger.LogInfo("No position change for column '${column.title}'.");
+      await _db.close();
+      return true;
+    }
+
+    if (newPosition < currentPosition) {
+      await _db.conn!.execute(
+        "update task_columns set column_position = column_position + 1 "
+        "where column_position >= $newPosition and column_position < $currentPosition"
+      );
+    } else {
+      await _db.conn!.execute(
+        "update task_columns set column_position = column_position - 1 "
+        "where column_position <= $newPosition and column_position > $currentPosition"
+      );
+    }
+
+    final result = await _db.conn!.execute(
+      "update task_columns set column_position = $newPosition where column_id = ${column.id}"
+    );
+
+    await refreshBoard();
+    await _db.close();
+
+    _logger.LogInfo("Moved column '${column.title}' to position '$newPosition'.");
+    return result.affectedRows != 0;
+  } catch (ex) {
+    _logger.LogError("Error updating column position: $ex");
+    return false;
+  }
+}
+
 
   Future<bool> createProject(String title) async {
     try {

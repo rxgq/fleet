@@ -94,7 +94,7 @@ class _TaskScreenState extends State<TaskScreen> {
       width: 480, height: 160,
       child: FleetField(
         onClickOff: () async {
-          await _db.updateDescription(widget.model, _descriptionController.text);
+          await _db.updateTaskDescription(widget.model, _descriptionController.text);
         }, 
         controller: _descriptionController
       ),
@@ -114,7 +114,7 @@ class _TaskScreenState extends State<TaskScreen> {
         selectedItem: selectedProject,
         items: _board.projects,
         onChange: (project) async {
-          await _db.updateProject(widget.model, project);
+          await _db.updateTaskProject(widget.model, project);
           await _db.refreshBoard();
         },
         itemToString: (project) => project.title,

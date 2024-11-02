@@ -46,7 +46,7 @@ class TaskColumnState extends State<TaskColumn> {
 
           if (task.columnId == widget.model.id) return;
 
-          await _db.updateStatus(task, widget.model);
+          await _db.updateTaskStatus(task, widget.model);
           widget.onUpdate();
         },
         builder: (context, _, __) {
