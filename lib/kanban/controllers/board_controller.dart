@@ -14,16 +14,16 @@ class BoardController {
   List<TaskProjectModel> projects = [];
 
   TaskColumnModel? getColumn(String title) {
-    return columns.where((x) => x.title == title).firstOrNull;
+    return columns.where((x) => x.title.toLowerCase() == title.toLowerCase()).firstOrNull;
   }
 
   TaskProjectModel? getProject(String title) {
-    return projects.where((x) => x.title == title).firstOrNull;
+    return projects.where((x) => x.title.toLowerCase() == title.toLowerCase()).firstOrNull;
   }
 
   TaskModel? getTask(String title) {
     for (var column in columns) {
-      var task = column.tasks.where((x) => x.title == title).firstOrNull;
+      var task = column.tasks.where((x) => x.title.toLowerCase() == title.toLowerCase()).firstOrNull;
       if (task != null) return task; 
     }
 

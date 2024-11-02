@@ -46,6 +46,7 @@ final class CliParser {
       "rmp"    => rmp(argc, argv),
       "crt"    => crt(argc, argv),
       "rmt"    => rmt(argc, argv),
+      "mov"    => mov(argc, argv),
 
       "cls"    => cls(argc, argv),
       "echo"   => echo(argc, argv),
@@ -136,6 +137,28 @@ final class CliParser {
     }
 
     await _db.deleteTask(task);
+    await _db.refreshBoard();
+  }
+
+  Future<void> mov(int argc, List<String> argv) async {
+    if (argv.length != 3) {
+      write("mov takes two arguments <task_name> <column_name>");
+      return;
+    }
+
+    var task = _board.getTask(argv[1]);
+    if (task == null) {
+      write("task '${argv[1]}' not found.");
+      return;
+    }
+
+    var column = _board.getColumn(argv[2]);
+    if (column == null) {
+      write("task '${argv[2]}' not found.");
+      return;
+    }
+
+    await _db.updateStatus(task, column);
     await _db.refreshBoard();
   }
   
