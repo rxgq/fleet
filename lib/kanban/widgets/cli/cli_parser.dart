@@ -43,11 +43,7 @@ final class CliParser {
     return switch (argv[0].toLowerCase()) {
       "cls"  => cls(argc, argv),
       "crp"  => crp(argc, argv),
-      // "crt"  => crt(argc, argv),
-      // "crc"  => crc(argc, argv),
-      // "rmt"  => rmt(argc, argv),
-      // "rmc"  => rmc(argc, argv),
-      // "mov"  => mov(argc, argv),
+      "rmp"  => rmp(argc, argv),
 
       "echo"   => echo(argc, argv),
       "cowsay" => cowsay(argc, argv),

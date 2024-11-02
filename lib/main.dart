@@ -1,4 +1,3 @@
-import 'package:fleet/kanban/views/board.dart';
 import 'package:fleet/kanban/views/login.dart';
 import 'package:flutter/material.dart';
 
