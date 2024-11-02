@@ -151,12 +151,12 @@ final class DatabaseService {
     }
   }
 
-  Future<bool> createTask(final String title, final TaskColumnModel column) async {
+  Future<bool> createTask(final String title, final int column) async {
     try {
       await _db.open();
 
       final result = await _db.conn!.execute(
-        "insert into tasks (title, column_id, description, task_position) values ('$title', ${column.id}, '', 0);"
+        "insert into tasks (title, column_id, description, task_position) values ('$title', '$column', '', 0);"
       );
 
       await refreshBoard();

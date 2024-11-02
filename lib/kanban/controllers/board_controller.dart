@@ -13,6 +13,23 @@ class BoardController {
   List<TaskColumnModel> columns = [];
   List<TaskProjectModel> projects = [];
 
+  TaskColumnModel? getColumn(String title) {
+    return columns.where((x) => x.title == title).firstOrNull;
+  }
+
+  TaskProjectModel? getProject(String title) {
+    return projects.where((x) => x.title == title).firstOrNull;
+  }
+
+  TaskModel? getTask(String title) {
+    for (var column in columns) {
+      var task = column.tasks.where((x) => x.title == title).firstOrNull;
+      if (task != null) return task; 
+    }
+
+    return null;
+  }
+
   void setColumns(final List<TaskColumnModel> newColumns) {
     newColumns.sort((a, b) => a.position.compareTo(b.position));
     columns = newColumns;

@@ -1,4 +1,5 @@
 import 'package:fleet/kanban/controllers/board_controller.dart';
+import 'package:fleet/kanban/models/task_project_model.dart';
 import 'package:fleet/kanban/services/database_service.dart';
 import 'package:flutter/material.dart';
 
@@ -41,15 +42,17 @@ final class CliParser {
     int argc = argv.length;
 
     return switch (argv[0].toLowerCase()) {
-      "cls"  => cls(argc, argv),
-      "crp"  => crp(argc, argv),
-      "rmp"  => rmp(argc, argv),
+      "crp"    => crp(argc, argv),
+      "rmp"    => rmp(argc, argv),
+      "crt"    => crt(argc, argv),
+      "rmt"    => rmt(argc, argv),
 
+      "cls"    => cls(argc, argv),
       "echo"   => echo(argc, argv),
       "cowsay" => cowsay(argc, argv),
 
-      "help" => help(),
-      _ => null,
+      "help"   => help(),
+      _        => null,
     };
   }
 
@@ -64,6 +67,66 @@ final class CliParser {
     write("mov <1> <2>  moves a task to another column");
   }
 
+  Future<void> crp(int argc, List<String> argv) async {
+    if (argc != 2) {
+      write("crp takes one argument <project>");
+      return;
+    }
+
+    var project = argv[1];
+    await _db.createProject(project);
+    await _db.refreshBoard();
+  }
+
+    Future<void> rmp(int argc, List<String> argv) async {
+    if (argc != 2) {
+      write("rmp takes one argument <project>");
+      return;
+    }
+
+    var projectName = argv[1];
+
+    var project = _board.projects.where((x) => x.title == projectName).firstOrNull;
+    if (project == null) return;
+
+    await _db.deleteProject(project);
+    await _db.refreshBoard();
+  }
+
+  Future<void> crt(int argc, List<String> argv) async {
+    if (argv.length != 3 && argv.length != 4) {
+      write("crt takes at least 2 arguments <task_name> <column_name>");
+      return;
+    }
+
+    var column = _board.getColumn(argv[2]);
+    if (column == null) {
+      write("column '$argv[2]' not found.");
+      return;
+    }
+
+    TaskProjectModel? project;
+    if (argv.length == 4) {
+      project = _board.getProject(argv[3]);
+      if (project == null) {
+        write("project '${argv[3]}' not found.");
+        return;
+      }
+    }
+
+    String? taskName = argv[1];
+    await _db.createTask(taskName, column.id);
+    var task = _board.getTask(taskName);
+    if (task == null) return;
+
+    if (project != null) await _db.updateProject(task, project);
+    await _db.refreshBoard();
+  }
+
+  Future<void> rmt(int argc, List<String> argv) async {
+    var task = _board.getTask(argv[1]);
+  }
+  
   void echo(int argc, List<String> argv) {
     var out = argv.getRange(1, argc).join(" ");
     write(out);
@@ -103,31 +166,5 @@ final class CliParser {
     }
 
     out.clear();
-  }
-
-  Future crp(int argc, List<String> argv) async {
-    if (argc != 2) {
-      write("crp takes one argument <project>");
-      return;
-    }
-
-    var project = argv[1];
-    await _db.createProject(project);
-    await _db.refreshBoard();
-  }
-
-    Future rmp(int argc, List<String> argv) async {
-    if (argc != 2) {
-      write("rmp takes one argument <project>");
-      return;
-    }
-
-    var projectName = argv[1];
-
-    var project = _board.projects.where((x) => x.title == projectName).firstOrNull;
-    if (project == null) return;
-
-    await _db.deleteProject(project);
-    await _db.refreshBoard();
   }
 }

@@ -97,7 +97,7 @@ class TaskColumnState extends State<TaskColumn> {
                               onEnter: () async {
                                 _isAddingTask = false;
                                 
-                                await _db.createTask(_taskTitleController.text, widget.model);
+                                await _db.createTask(_taskTitleController.text, widget.model.id);
                                 _taskTitleController.clear();
 
                                 widget.onUpdate();
