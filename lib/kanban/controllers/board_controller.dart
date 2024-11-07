@@ -50,7 +50,16 @@ class BoardController {
     }
 
     for (var column in columns) {
-      column.tasks.sort((a, b) => a.priority.compareTo(b.priority));
+      column.tasks.sort((a, b) {
+        if (a.priority == 0 && b.priority != 0) {
+          return 1;
+        } else if (a.priority != 0 && b.priority == 0) {
+          return -1;
+        } else {
+          return a.priority.compareTo(b.priority);
+        }
+      });
     }
+
   }
 }

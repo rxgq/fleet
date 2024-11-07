@@ -161,6 +161,8 @@ class _TaskCardState extends State<TaskCard> {
   }
 
   Widget _taskPriority() {
+    if (widget.model.priority == 0) return const SizedBox();
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: FleetText(

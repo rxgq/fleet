@@ -32,6 +32,7 @@ flutter:
     
     - assets/audio/siren.mp3
     - assets/audio/android_ringtone.mp3
+    - assets/audio/success.mp3
 
   fonts:
     - family: Inter

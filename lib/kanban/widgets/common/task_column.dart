@@ -1,5 +1,6 @@
 import 'package:fleet/kanban/models/task_column_model.dart';
 import 'package:fleet/kanban/models/task_model.dart';
+import 'package:fleet/kanban/services/audio_service.dart';
 import 'package:fleet/kanban/services/database_service.dart';
 import 'package:fleet/kanban/widgets/add_task/add_task_button.dart';
 import 'package:fleet/kanban/widgets/add_task/add_task_field.dart';
@@ -27,6 +28,7 @@ class TaskColumn extends StatefulWidget {
 
 class TaskColumnState extends State<TaskColumn> {
   final _db = DatabaseService();
+  final _audio = AudioService();
 
   bool _isHovering = false;
   bool _isHoveringTitle = false;
@@ -47,6 +49,11 @@ class TaskColumnState extends State<TaskColumn> {
           if (task.columnId == widget.model.id) return;
 
           await _db.updateTaskStatus(task, widget.model);
+
+          if (widget.model.title == "complete") {
+            _audio.play('audio/success.mp3');
+          }
+
           widget.onUpdate();
         },
         builder: (context, _, __) {
