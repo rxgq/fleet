@@ -26,7 +26,6 @@ final class CliParser {
   List<List<String>> parseCommands(String command) {
     if (command.isEmpty) return [];
 
-    commandHistory.add(command);
     List<List<String>> manyCmds = [];
 
     var commands = command.split("|");
@@ -45,32 +44,37 @@ final class CliParser {
     return manyCmds;
   }
 
-  TaskModel? autoCompleteTask(String taskNamePrefix) {
-    var matches = <TaskModel>[];
+  TaskModel? autoCompleteTask(List<String> argv) {
+    int argc = argv.length;
+    if (argc < 2) return null;
 
-    for (var col in _board.columns) {
-      for (var task in col.tasks) {
-        if (task.title.toLowerCase().startsWith(taskNamePrefix.toLowerCase().replaceAll("_", " "))) {
-          matches.add(task);
+    final List<String> autoTaskCommands = ["rmt", "stp"];
+
+    // ends with "t" means it is a *t*ask command
+    if (argc > 1 && argv[1].isNotEmpty && autoTaskCommands.contains(argv[0])) {
+      var matches = <TaskModel>[];
+      for (var col in _board.columns) {
+        for (var task in col.tasks) {
+          if (task.title.toLowerCase().startsWith(argv[1].toLowerCase().replaceAll("_", " "))) {
+            matches.add(task);
+          }
         }
+      }
+
+      if (matches.length == 1) {
+        write("Unique task match found: ${matches.first.title}.");
+        argv[1] = matches[0].title;
       }
     }
 
-    return matches.length == 1 ? matches.first : null;
+    return null;
   }
+
 
   Future execute(List<String> argv) async {
     int argc = argv.length;
 
-    if (argc > 1 && argv[1].isNotEmpty) {
-      var taskNamePrefix = argv[1];
-      var taskMatch = autoCompleteTask(taskNamePrefix);
-
-      if (taskMatch != null) {
-        argv[1] = taskMatch.title;
-        write("Auto-completed task: ${taskMatch.title}");
-      }
-    }
+    if (argc > 1) argv[1] = autoCompleteTask(argv)?.title ?? argv[1];
 
     return switch (argv[0].toLowerCase()) {
       "crp"    => crp(argc, argv),

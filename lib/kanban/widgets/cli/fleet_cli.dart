@@ -25,37 +25,39 @@ class _FleetCliState extends State<FleetCli> {
   @override
   void initState() {
     super.initState();
-    cli = CliParser(
-      context: context, 
-    );
+    cli = CliParser(context: context);
   }
 
+  // Handle key events for command history navigation
   KeyEventResult _handleKeyEvent(FocusNode node, RawKeyEvent event) {
     if (cli.commandHistory.isEmpty) return KeyEventResult.ignored;
+
     if (event is RawKeyDownEvent) return KeyEventResult.ignored;
 
     if (event.physicalKey == PhysicalKeyboardKey.arrowUp) {
+      // Navigate up in history
       if (cli.commandHistoryIndex == -1) {
+        // Start from the most recent command
         cli.commandHistoryIndex = cli.commandHistory.length - 1;
-      } else if (cli.commandHistoryIndex != 0) {
+      } else if (cli.commandHistoryIndex > 0) {
         cli.commandHistoryIndex--;
-      } else {
-        return KeyEventResult.ignored;
       }
-
 
     } else if (event.physicalKey == PhysicalKeyboardKey.arrowDown) {
-      if (cli.commandHistoryIndex == cli.commandHistory.length - 1) {
-        return KeyEventResult.ignored;
+      // Navigate down in history
+      if (cli.commandHistoryIndex < cli.commandHistory.length - 1) {
+        cli.commandHistoryIndex++;
+      } else {
+        cli.commandHistoryIndex = -1; // End of history
       }
-        
-
-      cli.commandHistoryIndex++;
     } else {
       return KeyEventResult.ignored;
     }
 
-    widget.controller.text = cli.commandHistory[cli.commandHistoryIndex];
+    // Update the text field with the selected command from history
+    widget.controller.text = cli.commandHistoryIndex == -1
+        ? '' // Clear if no history item is selected
+        : cli.commandHistory[cli.commandHistoryIndex];
     return KeyEventResult.handled;
   }
 
@@ -124,12 +126,19 @@ class _FleetCliState extends State<FleetCli> {
                     ),
                     cursorColor: Colors.white,
                     onChanged: (text) {
-                      if (text.isEmpty) cli.commandHistoryIndex = -1;
+                      if (text.isEmpty) {
+                        cli.commandHistoryIndex = -1; // Clear index when typing new command
+                      }
 
-                      var x = cli.autoCompleteTask(text);
-                      print(x);
+                      setState(() {
+                        var commands = cli.parseCommands(text);
+                        for (var command in commands) {
+                          cli.autoCompleteTask(command);
+                        }
+                      });
                     },
                     onSubmitted: (String command) async {
+                      cli.commandHistory.add(command);
                       await execute(command);
                     },
                     decoration: const InputDecoration(
