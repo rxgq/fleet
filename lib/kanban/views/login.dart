@@ -3,6 +3,7 @@ import 'package:fleet/kanban/views/board.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_field.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -13,15 +14,18 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final _passController = TextEditingController();
+  final _audioPlayer = AudioPlayer();
 
   int incorrectAttempts = 0;
   String lastAnswered = "";
 
-  void checkPass() {
+  void checkPass() async {
     final pass = Platform.environment['db_pass'];
 
     if (_passController.text != pass) {
       lastAnswered = _passController.text;
+
+      await _playAudio('audio/siren.mp3');
 
       setState(() {
         incorrectAttempts++;
@@ -30,6 +34,7 @@ class _LoginViewState extends State<LoginView> {
       return;
     }
 
+    await _playAudio('audio/android_ringtone.mp3');
 
     setState(() {
       _passController.clear();
@@ -39,6 +44,14 @@ class _LoginViewState extends State<LoginView> {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const BoardView())
     );
+  }
+
+  Future<void> _playAudio(String path) async {
+    try {
+      await _audioPlayer.play(AssetSource(path));
+    } catch (e) {
+      print('Error playing audio: $e');
+    }
   }
 
   @override

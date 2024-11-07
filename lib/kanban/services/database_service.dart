@@ -12,6 +12,19 @@ final class DatabaseService {
 
   final _logger = Logger();
 
+  // Future<T> execute<T>(Future<T> Function() operation, String message) async {
+  //   await _db.open();
+    
+  //   try {
+  //     return await operation();
+  //   } catch (ex) {
+  //     _logger.LogError("$message: $ex");
+  //     rethrow;
+  //   } finally {
+  //     await _db.close();
+  //   }
+  // }
+
   Future<List<TaskColumnModel>> getColumns() async {
     try {
       await _db.open();

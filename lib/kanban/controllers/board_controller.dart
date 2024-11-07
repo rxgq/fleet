@@ -50,7 +50,7 @@ class BoardController {
     }
 
     for (var column in columns) {
-      column.tasks.sort((a, b) => b.priority.compareTo(a.priority));
+      column.tasks.sort((a, b) => a.priority.compareTo(b.priority));
     }
   }
 }
