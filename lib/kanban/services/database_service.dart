@@ -175,8 +175,11 @@ final class DatabaseService {
     try {
       await _db.open();
 
+      int? project = _board.projects
+        .where((x) => x.title == "general").firstOrNull?.projectId;
+
       final result = await _db.conn!.execute(
-        "insert into tasks (title, column_id, description, task_position) values ('$title', '$column', '', 0);"
+        "insert into tasks (title, column_id, description, task_position, project_id) values ('$title', '$column', '', 0, $project);"
       );
 
       await refreshBoard();
