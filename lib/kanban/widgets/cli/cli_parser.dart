@@ -8,6 +8,8 @@ final class CliParser {
   final _board = BoardController();
 
   List<String> out = [];
+  List<String> commandHistory = [];
+  int commandHistoryIndex = -1;
 
   final BuildContext context;
 
@@ -20,6 +22,9 @@ final class CliParser {
   }
 
   List<List<String>> parseCommands(String command) {
+    if (command.isEmpty) return [];
+
+    commandHistory.add(command);
     List<List<String>> manyCmds = [];
 
     var commands = command.split("|");
