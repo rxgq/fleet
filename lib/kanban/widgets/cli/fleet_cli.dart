@@ -59,6 +59,21 @@ class _FleetCliState extends State<FleetCli> {
     return KeyEventResult.handled;
   }
 
+  Future<void> execute(String command) async {
+    setState(() {
+      cli.write('> $command');
+    });
+
+    var commands = cli.parseCommands(command);
+
+    for (var cmd in commands) {
+      await cli.execute(cmd);
+    }
+
+    widget.controller.clear();
+    widget.consoleNode.requestFocus();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -110,20 +125,12 @@ class _FleetCliState extends State<FleetCli> {
                     cursorColor: Colors.white,
                     onChanged: (text) {
                       if (text.isEmpty) cli.commandHistoryIndex = -1;
+
+                      var x = cli.autoCompleteTask(text);
+                      print(x);
                     },
                     onSubmitted: (String command) async {
-                      setState(() {
-                        cli.write('> $command');
-                      });
-                  
-                      var commands = cli.parseCommands(command);
-                  
-                      for (var cmd in commands) {
-                        await cli.execute(cmd);
-                      }
-                  
-                      widget.controller.clear();
-                      widget.consoleNode.requestFocus();
+                      await execute(command);
                     },
                     decoration: const InputDecoration(
                       contentPadding: EdgeInsets.symmetric(horizontal: 8),

@@ -1,5 +1,5 @@
 import 'package:fleet/kanban/models/task_model.dart';
-import 'package:fleet/kanban/services/database_service.dart';
+import 'package:fleet/kanban/services/database/database_service.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_dialogue.dart';
 import 'package:flutter/material.dart';

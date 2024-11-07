@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:postgres/postgres.dart';
 
-import 'logger.dart';
+import '../logger/logger.dart';
 
 final class FleetContext {
   final _logger = Logger();

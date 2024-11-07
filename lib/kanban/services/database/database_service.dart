@@ -1,9 +1,9 @@
 import 'package:fleet/kanban/controllers/board_controller.dart';
 import 'package:fleet/kanban/models/task_column_model.dart';
 import 'package:fleet/kanban/models/task_model.dart';
-import 'package:fleet/kanban/services/logger.dart';
+import 'package:fleet/kanban/services/logger/logger.dart';
 
-import '../models/task_project_model.dart';
+import '../../models/task_project_model.dart';
 import 'fleet_context.dart';
 
 final class DatabaseService {

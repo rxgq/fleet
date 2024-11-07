@@ -1,6 +1,6 @@
 import 'package:bcrypt/bcrypt.dart';
-import 'package:fleet/kanban/services/fleet_context.dart';
-import 'package:fleet/kanban/services/logger.dart';
+import 'package:fleet/kanban/services/database/fleet_context.dart';
+import 'package:fleet/kanban/services/logger/logger.dart';
 
 final class AuthService {
   final _db = FleetContext();

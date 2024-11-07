@@ -1,6 +1,6 @@
-import 'package:fleet/kanban/services/database_service.dart';
+import 'package:fleet/kanban/services/database/database_service.dart';
 import 'package:fleet/kanban/controllers/board_controller.dart';
-import 'package:fleet/kanban/services/logger.dart';
+import 'package:fleet/kanban/services/logger/logger.dart';
 import 'package:fleet/kanban/widgets/add_column/add_column_field.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
 import 'package:fleet/kanban/widgets/common/task_bar.dart';

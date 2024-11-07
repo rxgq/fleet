@@ -1,7 +1,7 @@
 import 'package:fleet/kanban/controllers/board_controller.dart';
 import 'package:fleet/kanban/models/task_model.dart';
 import 'package:fleet/kanban/models/task_project_model.dart';
-import 'package:fleet/kanban/services/database_service.dart';
+import 'package:fleet/kanban/services/database/database_service.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_close_icon.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_dropdown.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';

@@ -1,7 +1,9 @@
 import 'package:fleet/kanban/controllers/board_controller.dart';
 import 'package:fleet/kanban/models/task_project_model.dart';
-import 'package:fleet/kanban/services/database_service.dart';
+import 'package:fleet/kanban/services/database/database_service.dart';
 import 'package:flutter/material.dart';
+
+import '../../models/task_model.dart';
 
 final class CliParser {
   final _db = DatabaseService();
@@ -43,8 +45,32 @@ final class CliParser {
     return manyCmds;
   }
 
+  TaskModel? autoCompleteTask(String taskNamePrefix) {
+    var matches = <TaskModel>[];
+
+    for (var col in _board.columns) {
+      for (var task in col.tasks) {
+        if (task.title.toLowerCase().startsWith(taskNamePrefix.toLowerCase().replaceAll("_", " "))) {
+          matches.add(task);
+        }
+      }
+    }
+
+    return matches.length == 1 ? matches.first : null;
+  }
+
   Future execute(List<String> argv) async {
     int argc = argv.length;
+
+    if (argc > 1 && argv[1].isNotEmpty) {
+      var taskNamePrefix = argv[1];
+      var taskMatch = autoCompleteTask(taskNamePrefix);
+
+      if (taskMatch != null) {
+        argv[1] = taskMatch.title;
+        write("Auto-completed task: ${taskMatch.title}");
+      }
+    }
 
     return switch (argv[0].toLowerCase()) {
       "crp"    => crp(argc, argv),
@@ -64,7 +90,7 @@ final class CliParser {
     };
   }
 
-  void help() {    
+  void help() {
     write("crt  <1> <2> <3?> <4?>  creates a task in a column with optional project and position");
     write("crc  <1> <2?>           creates a column with an optional position");
     write("rmt  <1>                deletes a task");

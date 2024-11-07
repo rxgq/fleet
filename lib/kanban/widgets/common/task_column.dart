@@ -1,7 +1,7 @@
 import 'package:fleet/kanban/models/task_column_model.dart';
 import 'package:fleet/kanban/models/task_model.dart';
-import 'package:fleet/kanban/services/audio_service.dart';
-import 'package:fleet/kanban/services/database_service.dart';
+import 'package:fleet/kanban/services/audio/audio_service.dart';
+import 'package:fleet/kanban/services/database/database_service.dart';
 import 'package:fleet/kanban/widgets/add_task/add_task_button.dart';
 import 'package:fleet/kanban/widgets/add_task/add_task_field.dart';
 import 'package:fleet/kanban/widgets/common/misc/fleet_text.dart';
@@ -51,7 +51,7 @@ class TaskColumnState extends State<TaskColumn> {
           await _db.updateTaskStatus(task, widget.model);
 
           if (widget.model.title == "complete") {
-            _audio.play('audio/success.mp3');
+            await _audio.play('audio/success.mp3');
           }
 
           widget.onUpdate();
@@ -202,31 +202,38 @@ class TaskColumnState extends State<TaskColumn> {
     );
   }
 
-  Widget _columnTitle() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SizedBox(
-        width: 160,
-        child: Row(
-          children: [
-            FleetText(
-              text: widget.model.title,
-              size: 14,
-              colour: const Color.fromARGB(255, 110, 110, 110),
-              weight: FontWeight.w500,
-            ),
-            const SizedBox(width: 8),
-            FleetText(
+Widget _columnTitle() {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: SizedBox(
+      width: 160,
+      child: Row(
+        children: [
+          FleetText(
+            text: widget.model.title,
+            size: 14,
+            colour: const Color.fromARGB(255, 110, 110, 110),
+            weight: FontWeight.w500,
+          ),
+          const SizedBox(width: 8),
+          
+          // Wrap the task count in AnimatedSwitcher
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300), // Set animation duration
+            child: FleetText(
+              key: ValueKey<int>(widget.model.tasks.length), // Unique key for each task count
               text: "${widget.model.tasks.length}",
               size: 14,
               colour: const Color.fromARGB(255, 110, 110, 110),
               weight: FontWeight.w500,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildColumnTitleField() {
     return Padding(
