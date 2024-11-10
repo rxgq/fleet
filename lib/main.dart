@@ -1,5 +1,5 @@
-import 'package:fleet/kanban/views/login.dart';
 import 'package:flutter/material.dart';
+import 'package:fleet/kanban/views/login.dart';
 
 void main() {
   runApp(const App());
