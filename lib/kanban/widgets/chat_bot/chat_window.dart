@@ -62,27 +62,30 @@ class _ChatWindowState extends State<ChatWindow> {
                   itemCount: userChats.length + aiChats.length,
                   itemBuilder: (context, index) {
                     List<Widget> chatWidgets = [];
-      
+
                     if (index % 2 == 0) {
                       int userIndex = index ~/ 2;
                       chatWidgets.add(
                         Padding(
                           padding: const EdgeInsets.all(4),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(color: Colors.grey),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(userChats[userIndex]),
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: Colors.grey),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(userChats[userIndex]),
+                              ),
                             ),
                           ),
                         ),
                       );
                     }
-      
+
                     if (index % 2 == 1) {
                       int aiIndex = index ~/ 2;
                       chatWidgets.add(
@@ -91,7 +94,8 @@ class _ChatWindowState extends State<ChatWindow> {
                           child: Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: Colors.grey[200],
+                              color: const Color.fromARGB(255, 249, 249, 249),
+                              border: Border.all(color: const Color.fromARGB(255, 214, 214, 214)),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(aiChats[aiIndex]),
@@ -99,12 +103,13 @@ class _ChatWindowState extends State<ChatWindow> {
                         ),
                       );
                     }
-      
+
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: chatWidgets,
                     );
                   },
+
                 ),
               ),
               Row(

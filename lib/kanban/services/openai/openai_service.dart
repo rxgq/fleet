@@ -14,6 +14,7 @@ final class OpenAIService {
       headers: {"Authorization": "Bearer $apiKey", "Content-Type": "application/json"},
       body: jsonEncode({
         "model": "gpt-4o",
+        // "max_tokens": 64,
         "messages": [{ "role": "user", "content": prompt }]
       })
     );
